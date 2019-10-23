@@ -22,4 +22,3 @@ Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
 ```
 
-kjfkfjd
