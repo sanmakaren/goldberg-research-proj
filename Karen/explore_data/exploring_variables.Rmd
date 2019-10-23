@@ -1,0 +1,24 @@
+---
+title: "importData"
+author: "Karen Santamaria"
+date: "9/23/2019"
+output: html_document
+---
+
+```{r setup}
+library(tidyverse)
+library(devtools)
+library(papaja)
+library(psysds364data)
+```
+
+```{r}
+data("Goldberg")
+```
+
+
+```{r}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
+```
+
