@@ -1,0 +1,220 @@
+---
+title: "Multilevel Modeling and the APIM"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+#Load packages, Install any new ones
+
+```{r}
+library(psysds364data)
+library(tidyr)
+library(dplyr)
+library(nlme)
+library(mosaic)
+```
+
+#Data Restructuring
+
+```{r}
+tempA <- acitelli %>% 
+  mutate(genderE = gender, partnum = 1, 
+         gender = ifelse(gender == 1, "A", "P")) %>%
+  gather(variable, value, self_pos:genderE) %>%
+  unite(var_gender, variable, gender) %>%
+  spread(var_gender, value)
+
+tempB <- acitelli %>% 
+  mutate(genderE = gender, partnum = 2,
+         gender = ifelse(gender == 1, "P", "A")) %>%
+  gather(variable, value, self_pos:genderE)%>%
+  unite(var_gender, variable, gender) %>%
+  spread(var_gender, value)
+
+acitelli_pair <- bind_rows(tempA, tempB) %>%
+  mutate(genderstring_A = ifelse(genderE_A == 1, "Husband", "Wife")) %>%
+  arrange(cuplid) 
+  
+rm(tempA, tempB)
+head(acitelli_pair)
+```
+
+#Linear Modeling with Dyads
+
+Violating the independence assumption!!!
+
+```{r}
+favstats(~satisfaction_A, data = acitelli_pair)
+favstats(~other_pos_A, data = acitelli_pair)
+
+mod <- lm(satisfaction_A ~ other_pos_A + other_pos_P, data = acitelli_pair)
+
+summary(mod)
+```
+
+##Multilevel Modeling for Dyads
+
+```{r}
+aci <- acitelli_pair %>%
+  mutate(woMan = ifelse(genderE_A == -1, 1, 0))
+
+mlm <- gls(satisfaction_A ~ genderE_A, 
+           data = aci,
+           correlation = corCompSymm(form=~1|cuplid),
+           na.action = na.omit)
+
+summary(mlm)
+```
+
+
+#Indistinguishable Dyads
+
+```{r}
+apim_in <- gls(satisfaction_A ~ other_pos_A + other_pos_P,
+               data = acitelli_pair,
+               correlation = corCompSymm(form=~1|cuplid),
+               na.action = na.omit)
+
+summary(apim_in)
+```
+
+
+```{r}
+apim_in <- gls(satisfaction_A ~ genderE_A*other_pos_A + genderE_A*other_pos_P,
+               data = aci,
+               correlation = corCompSymm(form=~1|cuplid),
+               na.action = na.omit)
+
+summary(apim_in)
+```
+
+##R^2^  
+
+How much variance in the response variable does the actor and partner effects explain together? First we run the empty model so that we can get the total variance in the response---which we need to calculate the pseudo-R^2^.
+
+```{r}
+apim_in_empty <- gls(satisfaction_A ~ 1,
+                     data = acitelli_pair,
+                     correlation = corCompSymm(form=~1|cuplid),
+                     na.action = na.omit)
+
+summary(apim_in_empty)
+
+apim_in_empty$sigma^2
+```
+
+```{r}
+#to have R calculate the R2.
+r2 <- 1-(apim_in$sigma^2/apim_in_empty$sigma^2)
+r2
+```
+
+`Rho`: ICC = .618470  
+`Residual SE`^2^ empty model = .246951  
+`Residual SE`^2^ standard model = .174194  
+R^2^ = 1 - (.174194 / .246951) = .295  
+
+Called the R-sqaured---29.5% of the variance in satisfaction is explained by other positivity of the actor and the partner. Set it to zero if it's negative.  
+
+##Interpretation of Model Estimates  
+###Fixed Effects  
+**`Intercept`:** Predicted level of satisfaction for those scoring zero on the actor and partner variables.  Because these variables are not centered, it is not all that meaningful.  
+
+**`other_pos_A` or the Actor Variable:** If you see your partner positively, are you satisfied in the relationship? Yes!  
+
+**`other_pos_P` or the Partner effect:** If your partner sees you positively, are you satisfied in the relationship? (Or: If you see your partner positively, is your partner satisfied in the relationship?) Yes!  
+
+###Random Effects
+`Residual SE`^2^ is the error or unexplained variance.  
+The partial ICC, or `Rho`, is .469.  
+
+
+#Distingushable Dyads
+
+##Interaction Approach  
+1. Add distinguishing variable as a covariate.  Note its coding.  
+2. Have the distinguishing variable interact with the actor and the partner effects.  
+3. These interactions evaluate whether actor and partner effects are the same for the two people.  
+4. Add a `weights =` argument to allow for different error variances for the two members.  
+
+
+```{r}
+apim_di_int <- gls(satisfaction_A ~ other_pos_A + other_pos_P + genderE_A 
+                   + other_pos_A*genderE_A + other_pos_P*genderE_A,
+                   data = acitelli_pair,
+                   correlation = corCompSymm(form=~1|cuplid), 
+                   weights = varIdent(form=~1|genderE_A), 
+                   na.action = na.omit)
+
+summary(apim_di_int)
+```
+
+###Interpretation of Effects  
+
+**Intercept** = .650854---The predicted score for husbands and wives who have a 0 on how positively they see the spouse (We should have centered!)  
+**genderE_A**  = .039605---Husband are very slightly more satisfied (about .08 points more) than wives when you control for how they both view their spouse. (Recall wives are -1 on Gender_A and Husbands are +1; the difference between husbands and wives is then twice the difference of the effect of Gender_A.)  
+**other_pos_A** = .401043---Actor Effect: The more positively you view your spouse, the more satisfied you are in the marriage.  
+**other_pos_P** = .291564---Partner Effect:  The more positively your partner views you, the more satisfied you are in the marriage.  
+**genderE_A X other_pos_A** = .023343---The actor effect is stronger for husbands.  
+**genderE_A X other_pos_P** = -.029914---The partner effect is stronger H -> W than W -> H.  
+
+**Actor Effect for Husbands** = .401043 + .023343 = 0.424386  
+**Actor Effect for Wives** = .401043 - .023343  = 0.37770  
+**Partner Effect for W -> H** = .291564 + (-.029914) = 0.261650  
+**Partner Effect for H -> W** = .291564 - (-.029914) = 0.321478  
+
+.207460, error variance for Wives  
+.143139, error variance for Husbands  
+
+
+##Two-Intercept Approach  
+This involves a trick by which one equation becomes two.  We create two dummy variables: $H_{ij}$ which equals 1 for husbands and 0 for wives and $W_{ij}$ which equals 1 for wives and zero for husband.  We then estimate the following equation:  
+
+$$Y_{ij} = b_HH_{ij} + a_HH_{ij}A_{ij} + p_HH_{ij}P_{ij} + H_{ij}e_{ij} + b_WW_{ij} + a_WW_{ij}A_{ij} + p_WW_{ij}P_{ij} + W_{ij}e_{ij}$$  
+
+Note that the equation has no ordinary intercept, but rather, in some sense, two intercepts, $b_H$ and $b_W$.  Note that when $H_{ij} = 1$ and $W_{ij} = 0$, the above becomes  
+
+$$Y_{ij} = b_H + a_HA_{ij} + p_HP_{ij} + e_{ij}$$
+
+and when $H_{ij} = 0$ and $W_{ij} = 1$, the above becomes  
+
+$$Y_{ij} = b_W + a_WA_{ij} + p_WP_{ij} + e_{ij}$$
+
+Thus, one equals becomes two and we have actor and partner for both members.  
+
+To implement this in R, we do the following:  
+
+1. Add distinguishing variable as a factor, using `genderstring_A` created above.
+2. Have no intercept in the fixed model by adding `-1` to the formula.
+3. Have the distinguishing variable (`genderE_A`) interact with actor and partner effect, but no actor and partner main effects. We need to use `:` for this instead of `*`. Separate actor and partner effects will be estimated for each member.  
+4. Keep the `weights =` argument to allow for different error variances for the two members.
+
+
+```{r}
+apim_di_two <- gls(satisfaction_A ~ genderstring_A + other_pos_A:genderstring_A + other_pos_P:genderstring_A - 1,
+                   data = acitelli_pair,
+                   correlation = corCompSymm(form=~1|cuplid), 
+                   weights = varIdent(form=~1|genderE_A), 
+                   na.action = na.omit)
+
+summary(apim_di_two)
+```
+
+
+
+We could also get R^2^ for husbands and wives separately. 
+
+```{r}
+apim_di_empty <- gls(satisfaction_A ~ genderstring_A - 1,
+                     data = acitelli_pair,
+                     correlation = corCompSymm(form=~1|cuplid), 
+                     weights = varIdent(form=~1|genderE_A), 
+                     na.action = na.omit)
+
+summary(apim_di_empty)
+```
+
+Error variance for Wives: .280928 
+- Pseudo R^2^ is 1 - .207460/.280928 = .2615  
+Error variance for Husbands: .213248
+- Pseudo R^2^ is 1 - .143139/.213248 = .3288
