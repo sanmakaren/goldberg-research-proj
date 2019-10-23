@@ -1,0 +1,33 @@
+---
+title: "Person_period_pairwise"
+output: html_document
+---
+
+```{r setup}
+library(tidyverse)
+library(devtools)
+library(papaja)
+library(psysds364data)
+```
+
+```{r}
+data("Goldberg")
+```
+
+
+```{r}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))#%>%
+  #mutate(id = row_number())
+
+sub_G <- Goldberg_yifan[c(1:5, 6:13)]
+
+#ppp: person, period, pairwise
+
+sub_G_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_")%>%
+  gather("key","value", 2:9)%>%
+  separate(key, into = c("wave","scale"), sep = 3)%>%
+  separate(scale, into = c("test", "A/P"), sep = "_")%>%
+  spread("A/P","value")
+```
