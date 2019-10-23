@@ -86,7 +86,11 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 # Discussion
 
-jjjjkkjjjk
+ git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
 \newpage
 
 # References
