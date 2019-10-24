@@ -22,3 +22,21 @@ Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
 ```
 
+
+code modified from Yifan 
+```{r}
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
+#ppp: person, period, pairwise
+
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
+
+sub_G_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  separate(scale, into = c("test", "A/P"), sep = "_") %>%
+  spread("A/P","value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_")
+```
+
