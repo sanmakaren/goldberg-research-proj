@@ -14,10 +14,8 @@ library(psysds364data)
 
 ```{r}
 data("Goldberg")
-```
+data("Goldberg_rutendo")
 
-
-```{r}
 Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
 ```
@@ -36,5 +34,60 @@ Goldberg_ppp <-
   separate(key, into = c("wave","scale"), sep = 3) %>%
   spread("scale", "value") %>%
   separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+```
+
+```{r}
+Goldberg_rutendo %>%
+  select(contains('gender')) %>%
+  names()
+
+
+Goldberg_rutendo$race <- as_factor(Goldberg_rutendo$w11Race_A)
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+Goldberg_rutendo$sexor <- as_factor(Goldberg_rutendo$sexor)
+Goldberg_rutendo$education <- as_factor(Goldberg_rutendo$w11Educ_A)
+Goldberg_rutendo$adop_type_cpl <- as_factor(Goldberg_rutendo$w11Couple_A)
+Goldberg_rutendo$family_income <- as_factor(Goldberg_rutendo$w11FamInc_A)
+Goldberg_rutendo$personal_income <- as_factor(Goldberg_rutendo$w11PersInc_A)
+Goldberg_rutendo$why_adopt <- as_factor(Goldberg_rutendo$w11WhyAdopt_A)
+Goldberg_rutendo$gender <- as_factor(Goldberg_rutendo$gender_A)
+
+
+Goldberg_rutendo$race <- fct_explicit_na(Goldberg_rutendo$race, na_level = "(Missing)")
+
+Goldberg_rutendo %>%
+  group_by(race) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(sexor) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(group) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(education) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(adop_type_cpl) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(why_adopt) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
+
+Goldberg_rutendo %>%
+  group_by(gender) %>%
+  tally  %>%
+  mutate(pct=100* (n/sum(n)))
 ```
 
