@@ -14,6 +14,7 @@ library(psysds364data)
 
 ```{r}
 data("Goldberg")
+data("Goldberg_rutendo")
 ```
 
 
@@ -36,5 +37,6 @@ Goldberg_ppp <-
   separate(key, into = c("wave","scale"), sep = 3) %>%
   spread("scale", "value") %>%
   separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+
 ```
 
