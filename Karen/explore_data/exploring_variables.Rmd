@@ -10,6 +10,7 @@ library(tidyverse)
 library(devtools)
 library(papaja)
 library(psysds364data)
+library(plyr)
 ```
 
 ```{r}
@@ -21,7 +22,7 @@ Goldberg_yifan <- Goldberg_rutendo %>%
 ```
 
 
-code modified from Yifan 
+Create ppp table
 ```{r}
 sub_G <- Goldberg_yifan[c(1:5, 6:656)]
 
@@ -36,58 +37,178 @@ Goldberg_ppp <-
   separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
 ```
 
+
+Search through variables for information
 ```{r}
 Goldberg_rutendo %>%
-  select(contains('gender')) %>%
+  select(contains('length')) %>%
   names()
 
+var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
+variable_label = sjlabelled::get_label(Goldberg_rutendo))
+var_labels[grep("years", var_labels$variable_label),]
+```
 
-Goldberg_rutendo$race <- as_factor(Goldberg_rutendo$w11Race_A)
+
+
+Demographic variables as factors to make easier to use
+w11FamInc_A
+```{r}
+Goldberg_rutendo$w11Race_A <- as_factor(Goldberg_rutendo$w11Race_A)
+Goldberg_rutendo$w12Race_A <- as_factor(Goldberg_rutendo$w12Race_A)
 Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
 Goldberg_rutendo$sexor <- as_factor(Goldberg_rutendo$sexor)
-Goldberg_rutendo$education <- as_factor(Goldberg_rutendo$w11Educ_A)
-Goldberg_rutendo$adop_type_cpl <- as_factor(Goldberg_rutendo$w11Couple_A)
-Goldberg_rutendo$family_income <- as_factor(Goldberg_rutendo$w11FamInc_A)
-Goldberg_rutendo$personal_income <- as_factor(Goldberg_rutendo$w11PersInc_A)
-Goldberg_rutendo$why_adopt <- as_factor(Goldberg_rutendo$w11WhyAdopt_A)
-Goldberg_rutendo$gender <- as_factor(Goldberg_rutendo$gender_A)
+Goldberg_rutendo$w11Educ_A <- as_factor(Goldberg_rutendo$w11Educ_A)
+Goldberg_rutendo$w11Couple_A <- as_factor(Goldberg_rutendo$w11Couple_A)
+Goldberg_rutendo$w11WhyAdopt_A <- as_factor(Goldberg_rutendo$w11WhyAdopt_A)
+Goldberg_rutendo$gender_A <- as_factor(Goldberg_rutendo$gender_A)
+```
 
 
-Goldberg_rutendo$race <- fct_explicit_na(Goldberg_rutendo$race, na_level = "(Missing)")
+participant age??? educations ask randi cant find
 
-Goldberg_rutendo %>%
-  group_by(race) %>%
+income, age of children,
+
+
+percentages of gender
+```{r}
+Goldberg_perc_gender <- Goldberg_rutendo %>%
+  group_by(gender_A) %>%
   tally  %>%
-  mutate(pct=100* (n/sum(n)))
+  mutate(percent=100* (n/sum(n)))  %>%
+  arrange(desc(percent))
+Goldberg_perc_gender
+```
 
-Goldberg_rutendo %>%
+percentages of racial groups
+```{r}
+Goldberg_perc_race <- Goldberg_rutendo %>%
+  group_by(w12Race_A) %>%
+  tally  %>%
+  mutate(percent=100* (n/sum(n))) %>%
+  select(-n) %>%
+  arrange(desc(percent))
+Goldberg_perc_race
+```
+
+percentages of educations
+```{r}
+Goldberg_perc_edu <- Goldberg_rutendo %>%
+  group_by(w11Educ_A) %>%
+  tally  %>%
+  mutate(percent=100* (n/sum(n))) %>%
+  arrange(desc(percent))
+Goldberg_perc_edu
+```
+
+income family
+```{r}
+summary(Goldberg_rutendo$w11FamInc_A)
+summary(Goldberg_rutendo$w14FamInc_A)
+```
+
+income personal
+```{r}
+summary(Goldberg_rutendo$w11PersInc_A)
+summary(Goldberg_rutendo$w14PersInc_A)
+```
+
+
+age of children
+```{r}
+summary(Goldberg_rutendo$w14CBCLage_A)
+```
+
+perc orientations
+```{r}
+Golberg_perc_orientation <- Goldberg_rutendo %>%
   group_by(sexor) %>%
   tally  %>%
-  mutate(pct=100* (n/sum(n)))
+  mutate(percent=100* (n/sum(n))) %>%
+  arrange(desc(percent))
+Golberg_perc_orientation
+```
 
-Goldberg_rutendo %>%
+
+other
+```{r}
+Goldberg_perc_adopt_type <- Goldberg_rutendo %>%
+  group_by(w11Couple_A) %>%
+  tally  %>%
+  mutate(percent=100* (n/sum(n)))  %>%
+  arrange(desc(percent))
+
+Goldberg_perc_adopt_why <- Goldberg_rutendo %>%
+  group_by(w11WhyAdopt_A) %>%
+  tally  %>%
+  mutate(percent=100* (n/sum(n)))  %>%
+  arrange(desc(percent))
+```
+
+
+
+
+report the number of same-gender and different-gender couples. 
+```{r}
+Golberg_perc_relation <- Goldberg_rutendo %>%
   group_by(group) %>%
   tally  %>%
-  mutate(pct=100* (n/sum(n)))
-
-Goldberg_rutendo %>%
-  group_by(education) %>%
-  tally  %>%
-  mutate(pct=100* (n/sum(n)))
-
-Goldberg_rutendo %>%
-  group_by(adop_type_cpl) %>%
-  tally  %>%
-  mutate(pct=100* (n/sum(n)))
-
-Goldberg_rutendo %>%
-  group_by(why_adopt) %>%
-  tally  %>%
-  mutate(pct=100* (n/sum(n)))
-
-Goldberg_rutendo %>%
-  group_by(gender) %>%
-  tally  %>%
-  mutate(pct=100* (n/sum(n)))
+  mutate(percent=100* (n/sum(n))) %>%
+  arrange(desc(percent))
+Golberg_perc_relation
 ```
+
+
+
+
+report the number of same-race and different-race dyads
+```{r}
+Goldberg_rutendo %>%
+  filter(Member_A == 1 & Member_P == 2) %>%
+  mutate(w12POC_P = if_else(w12Race_P == 'Caucasian' | 
+                            w12Race_P == 'Mostly Caucasian (1/8 American Indian)' | 
+                            w12Race_P == 'Mostly white', 'white','poc')) %>%
+  mutate(w12POC_A = if_else(w12Race_A == 'Caucasian' |
+                            w12Race_A == 'Mostly Caucasian (1/8 American Indian)' |
+                            w12Race_A == 'Mostly white', 'white','poc' )) %>%
+  select(w12POC_A,w12POC_P) %>%
+  mutate(same_race = if_else(w12POC_A == w12POC_P, 'same_poc_relationship','diff_poc_relationship')) %>%
+  group_by(w12POC_A,w12POC_P) %>%
+  tally()
+```
+
+Report samplesize(number of individuals as well as number ofdyads)
+```{r}
+#get num or rows
+```
+
+
+
+
+filter out so a single couple shows 
+
+relationship length different between les, het, gay male couples? anova test
+```{r}
+fit <- aov(w11RelDur_A ~ group, data=Goldberg_rutendo) 
+layout(matrix(c(1,2,3,4),2,2))
+plot(fit) 
+
+
+ggplot(Goldberg_rutendo, aes(x=group, y=w11RelDur_A, fill=group)) + 
+  geom_boxplot() 
+```
+
+fam income different between les, het, gay male couples? anova test
+```{r}
+fit <- aov(w11FamInc_A ~ group, data=Goldberg_rutendo) 
+layout(matrix(c(1,2,3,4),2,2)) 
+plot(fit) 
+anova(fit)
+
+ggplot(Goldberg_rutendo, aes(x=group, y=w11RelDur_A, fill=group)) + 
+  geom_boxplot() 
+```
+
+
+
 
