@@ -47,12 +47,12 @@ Goldberg_ppp <-
 Search through variables for information
 ```{r}
 Goldberg_rutendo %>%
-  select(contains('length')) %>%
+  select(contains('depression')) %>%
   names()
 
 var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
 variable_label = sjlabelled::get_label(Goldberg_rutendo))
-var_labels[grep("years", var_labels$variable_label),]
+var_labels[grep("depres", var_labels$variable_label),]
 ```
 
 
