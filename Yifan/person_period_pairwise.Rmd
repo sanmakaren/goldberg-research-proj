@@ -12,6 +12,8 @@ library(psysds364data)
 
 ```{r}
 data("Goldberg")
+data("Goldberg_rutendo")
+
 ```
 
 
@@ -20,14 +22,85 @@ Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))#%>%
   #mutate(id = row_number())
 
-sub_G <- Goldberg_yifan[c(1:5, 6:13)]
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
 
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
 #ppp: person, period, pairwise
 
-sub_G_ppp <- 
-  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_")%>%
-  gather("key","value", 2:9)%>%
-  separate(key, into = c("wave","scale"), sep = 3)%>%
-  separate(scale, into = c("test", "A/P"), sep = "_")%>%
-  spread("A/P","value")
+Goldberg_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
 ```
+
+count percent drop off 
+```{r}
+Goldberg_ppp[is.na(Goldberg_ppp)] <- 0
+
+miss_count <- Goldberg_ppp %>%
+  mutate(miss = rowSums(Goldberg_ppp[,c(7:233)]))%>%
+  filter(Member_A == 1 & Member_P == 2,
+         wave!= "w11") %>%
+  select(miss, wave)%>%
+  filter(miss == 0)%>%
+  group_by(wave)%>%
+  count() 
+
+miss_group <- Goldberg_ppp %>%
+  mutate(miss = rowSums(Goldberg_ppp[,c(7:233)]))%>%
+  filter(Member_A == 1 & Member_P == 2,
+         wave!= "w11") %>%
+  select(FamID, group, wave, miss)%>%
+  filter(miss == 0)%>%
+  group_by(wave, group)%>%
+  count() 
+```
+
+7 families droped during at wave 3 and 24 families dropped at wave 4.
+159 in total
+
+les gay het 
+  1   2   3
+
+
+# scores across group across waves
+
+```{r, relationship_questionaire}
+relationship_stat <- Goldberg_ppp %>%
+  filter(Member_A == 1 & Member_P == 2,
+         wave != "w11")%>%
+  select(FamID, wave, sexor, group,contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"))%>%
+  mutate(total = (love_A+love_P+cnflct_A+cnflct_P+ambiv_A+ambiv_P+maint_A+maint_P)/8)%>%
+  group_by(group, wave)%>%
+  summarise(avg = mean(total))
+```
+
+All groups experience decreasing scores in relationship status through the waves.
+
+```{r}
+attch_rr <- Goldberg_rutendo %>%
+   select(FamID, sexor, group, contains("rrattach"))
+
+attch <- Goldberg_rutendo %>%
+   select(FamID, sexor, group)
+
+attch_item <- c("rattach1", "rattach2", "rattach3", "rattach4", "rattach5", "rattach6", "rrattach7", "rrattach8", "rrattach9", "rrattach10", "rrattach11", "rrattach12", "rrattach13", "rrattach14", "rattach15", "rattach16", "rattach17", "rattach18", "rattach19")
+
+```
+
+
+```{r, attachment}
+attch_stat <- Goldberg_ppp %>%
+  filter(Member_A == 1 & Member_P == 2,
+         wave != "w11")%>%
+  select(FamID, wave, sexor, group,contains ("rattach"),
+         )%>%
+  mutate(total = rowSums(attch_stat[5:58])/19)%>%
+  group_by(group, wave)%>%
+  summarise(avg = mean(total))
+```
+
+
