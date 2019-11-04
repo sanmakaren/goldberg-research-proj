@@ -1,0 +1,133 @@
+---
+title             : "Measures and Descriptive Statistics"
+shorttitle        : "SDS/PSY 365"
+author: 
+    
+  - name          : "Karen Santamaria"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "sanmakaren@gmail.com"
+    address       : "1 Chapin Way, Unit 7766, Northampton, MA 01063"
+  - name          : "Yifan Ma"
+    affiliation   : "1"
+  - name          : "Caroline Li"
+    affiliation   : "1"
+  - name          : "Jane Bang"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Smith College"
+bibliography      : ["r-references.bib"]
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library("tidyverse")
+library("psysds364data")
+data("Goldberg")
+data("Goldberg_rutendo")
+Goldberg_rutendo <- Goldberg_rutendo %>%
+  filter(Member_A == 1 & Member_P == 2 | Member_A == 2 & Member_P == 1)
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+
+# Method
+
+## Measures
+
+**Parents Relationship.**
+Parents’ relationship was assessed using the Relationship Questionnaire by Braiker and Kelley(@goldberg2010preadoptive). The questionnaire contains four subscales: Love (10 items), Conflict (five items), Ambivalence (five items), and Maintenance (five items). Some example items include “To what extent do you have a sense of ‘belonging with your partner?’” (Love), “How ambivalent are you about continuing in the relationship with your partner?” (Ambivalence), and “How often do you and your partner argue?” (Conflict). The questions are answered on a 9-point scale (1 not at all to 9 very much). The scale is reliable, 0.8 for the Love subscale, 0.69 for the Conflict subscale after we dropped one variable (w11mar15_A), 0.73 for the Ambivalent subscale, and 0.53 for the Maintenance subscale. The intraclass correlation (ICC) were 0.42 (Love), 0.52 (Conflict), 0.23 (Ambivalent), and 0.33 (Maintenance).
+
+**Attachment**
+The Maternal Postnatal Attachment Scale (MPAS; @condon1997correlates) is a 19 items self-report questionnaire to assess mother-to-infant attachment. Items are rated on a 2, 3, 4, 5 point rating scale, depending on the item. The questionnaire consists of three subscales: Quality of Attachment (9 items), Absence of Hostility (5 items), and Pleasure in Interaction (5 items). Example items include, “When I am with the baby I feel tense and anxious,” and “When I am caring for the baby, I get feelings of annoyance or irritation.” The scale was reliable, alpha = 0.76 The intraclass correlation (ICC) was, ICC = 0.24.
+
+**Depression**
+Depression was assessed using the Center for Epidemiological Studies-Depression Scale (CES-D), which is a 20-item measure developed by the National Institute of Mental Health by Radloff(@ghunney2011beyond). The example questions include “My sleep was restless” and “I did not feel like eating; my appetite was poor” on a four-point scale from 0--rarely or none of the time (less than 1 day) to 3-- most or all of the time (5-7 days). The scale was reliable, Cronbach’s alpha = 0.88. The intraclass correlation (ICC) was 0.19.
+
+**Anxiety.**
+ The Spielberger State-Trait Anxiety Inventory (STAI; @spielberger1983state) is a 40 items instrument to measure trait anxiety and state anxiety. Due to the purpose of our study, only the Trait Anxiety subscale (20 items) is used to assess anxiety as a personality characteristic using a Likert scale ranging between 1 (not at all) to 4 (very much). Example items include: “I worry too much over something that really doesn’t matter” and “I am content; I am a steady person.” The scale was reliable, alpha = 0.9. The intraclass correlation (ICC) was, ICC = -0.0058
+
+
+
+
+# Results
+
+## Preliminary Analyses 
+
+```{r}
+num_complete <- Goldberg_rutendo %>% 
+  filter((Member_A == 1 & Member_P == 2) | (Member_A == 2 & Member_P == 1)) %>%
+  summarise(n())
+
+num_indiv <- Goldberg_rutendo %>% 
+  summarise(n())
+```
+
+There are  `r num_complete` individuals recorded in the study where an Actor and a Partner are both present. Within the scope of this study we will exclusively working with these `r num_complete` individuals, 141 dyads. 
+The dyad relationships were 39.0% heterosexual, 33.3% lesbian, and 27.7% gay. 
+The gender makeup of the study is, 52.8%  female and 47.2% male. 
+There are 31 racial/ethnic groups identified in the study with the 8 largest groups being: Caucasian (31.9%), African American (9.93%), 1/2 African American and 1/2 Caucasian (7.80%), Hispanic (7.80%), Guatemalan (7.45%), Chinese (7.09%),Vietnamese (3.55%), 1/2 Caucasion and 1/2 Hispanic (3.19%). 
+The median personal income for participants in the study was \$55,00 during phase 11 and \$60,000 during phase 14. 
+The median age when a child came to be with their parent was 0 years however something to note is that there is one instance where the recorded age was 72, which may due to error in the data. 
+The main reason for adoption in this study was due to infertility (43.3%).
+The dyads were categorized as POC-POC (66.0%), white-white (32.6%), POC-white(0.709), and NA-NA (0.709). White was loosly defined as those that idenitified as Caucasian, Mostly Caucasian (1/8 American Indian), and Mostly White and POC was an used for all others that were not categorized as white.
+In terms of education, 32.3% of individuals in this study have a Master's, 30.9% have completed college, 14.2% did not repoort education level,  9.57% had a PhD, JD or MD, 6.03% had some college, 3.90% had a high school diploma, and 3.19% had an Associate's.
+
+By using an ANOVA test we found that sexual orientation (homosexual or heterosexual) was a statistically significant predictor for relationship duration at phase 11. On average, homosexual couples in this study have been in a relationship for 1.7557 years less than heterosexual couples.
+
+
+
+```{r, include= FALSE}
+Goldberg_rutendo_only1 <- Goldberg_rutendo %>%
+  filter(Member_A == 1)
+
+lm1 <- lm(w11RelDur_A ~ sexor, data=Goldberg_rutendo_only1)
+summary(lm1)
+summary(aov(lm1))
+
+fit <- aov(w11RelDur_A ~ sexor, data=Goldberg_rutendo_only1) 
+layout(matrix(c(1,2,3,4),2,2))
+plot(fit) 
+anova(fit)
+summary(fit)
+```
+
+```{r}
+ggplot(Goldberg_rutendo_only1, aes(x=sexor, y=w11RelDur_A)) + 
+  geom_boxplot() 
+```
+
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup
