@@ -8,12 +8,21 @@ library(tidyverse)
 library(devtools)
 library(papaja)
 library(psysds364data)
+library(dplyr)
 ```
 
 ```{r}
 data("Goldberg")
 data("Goldberg_rutendo")
 
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+
+Goldberg_rutendo <-  Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
+
+var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
+variable_label = sjlabelled::get_label(Goldberg_rutendo))
+var_labels[grep("depres", var_labels$variable_label),]
 ```
 
 
@@ -40,27 +49,36 @@ count percent drop off
 ```{r}
 Goldberg_ppp[is.na(Goldberg_ppp)] <- 0
 
+# total dyad number 
+
+Goldberg_ppp%>%
+  filter(Member_A == 1 & Member_P == 2)%>%
+  group_by(FamID)%>%
+  count()
+
 miss_count <- Goldberg_ppp %>%
   mutate(miss = rowSums(Goldberg_ppp[,c(7:233)]))%>%
-  filter(Member_A == 1 & Member_P == 2,
+  filter(Member_A == 1,
          wave!= "w11") %>%
   select(miss, wave)%>%
   filter(miss == 0)%>%
   group_by(wave)%>%
-  count() 
+  count()#%>%
+  #mutate(percentage = n/141*100)
 
 miss_group <- Goldberg_ppp %>%
   mutate(miss = rowSums(Goldberg_ppp[,c(7:233)]))%>%
-  filter(Member_A == 1 & Member_P == 2,
+  filter(Member_A == 1,
          wave!= "w11") %>%
   select(FamID, group, wave, miss)%>%
   filter(miss == 0)%>%
   group_by(wave, group)%>%
-  count() 
+  tally() #%>%
+  #mutate(percentage = n/141*100 )
 ```
 
 7 families droped during at wave 3 and 24 families dropped at wave 4.
-159 in total
+141 in total, 159
 
 les gay het 
   1   2   3
@@ -68,39 +86,85 @@ les gay het
 
 # scores across group across waves
 
-```{r, relationship_questionaire}
-relationship_stat <- Goldberg_ppp %>%
-  filter(Member_A == 1 & Member_P == 2,
-         wave != "w11")%>%
-  select(FamID, wave, sexor, group,contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"))%>%
-  mutate(total = (love_A+love_P+cnflct_A+cnflct_P+ambiv_A+ambiv_P+maint_A+maint_P)/8)%>%
+```{r, anxiety}
+
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+
+
+anxiety_stat <- Goldberg_rutendo %>%
+  filter(Member_A == 1)%>%
+  select(FamID, sexor, group, contains("w11seq_"), contains ("w12seq_"), contains("w13seq_"), contains("w14seq_"))%>%
+  unite("ID", 1:3, sep = "_") %>%
+  gather("key","value", 2:7) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(ID , into = c( "FamID", "sexor","group"), sep = "_")%>%
+  mutate(total = (seq_A + seq_P)/2)%>%
   group_by(group, wave)%>%
-  summarise(avg = mean(total))
+  dplyr::summarise(avg = mean(total,na.rm =TRUE))
+
 ```
 
 All groups experience decreasing scores in relationship status through the waves.
 
-```{r}
-attch_rr <- Goldberg_rutendo %>%
-   select(FamID, sexor, group, contains("rrattach"))
+```{r, relationship}
 
-attch <- Goldberg_rutendo %>%
-   select(FamID, sexor, group)
+relationship_stat <- Goldberg_ppp %>%
+  filter(Member_A == 1,
+         wave != "w11")%>%
+  select(FamID, wave, sexor, group,contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"))%>%
+  mutate(total = (love_A+love_P+cnflct_A+cnflct_P+ambiv_A+ambiv_P+maint_A+maint_P)/8)%>%
+  group_by(group, wave)%>%
+  dplyr::summarise(avg = mean(total, na.rm = TRUE))
 
-attch_item <- c("rattach1", "rattach2", "rattach3", "rattach4", "rattach5", "rattach6", "rrattach7", "rrattach8", "rrattach9", "rrattach10", "rrattach11", "rrattach12", "rrattach13", "rrattach14", "rattach15", "rattach16", "rattach17", "rattach18", "rattach19")
+ggplot(relationship_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Average Relationship Score by Groups Across Waves ")
 
 ```
 
+
+```{r, depression}
+
+depres_stat <- Goldberg_rutendo%>%
+  filter(Member_A ==1 )%>%
+  select(FamID, sexor, group, contains("w11feel_"), contains ("w12feel_"), contains("w13feel_"), contains("w14feel_"))%>%
+  unite("ID", 1:3, sep = "_") %>%
+  gather("key","value", 2:7) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(ID , into = c( "FamID", "sexor","group"), sep = "_")%>%
+  mutate(total = (feel_A + feel_P)/2)%>%
+  group_by(group, wave)%>%
+  filter(wave != "w11")%>%
+  dplyr::summarise(avg = mean(total,na.rm =TRUE))
+
+ggplot(depres_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Average Depression Score by Groups Across Waves ")
+```
 
 ```{r, attachment}
-attch_stat <- Goldberg_ppp %>%
-  filter(Member_A == 1 & Member_P == 2,
-         wave != "w11")%>%
-  select(FamID, wave, sexor, group,contains ("rattach"),
-         )%>%
-  mutate(total = rowSums(attch_stat[5:58])/19)%>%
-  group_by(group, wave)%>%
-  summarise(avg = mean(total))
-```
 
+attch_stat <- Goldberg_rutendo%>%
+  filter(Member_A ==1 )%>%
+  select(FamID, sexor, group, contains("w11attach_"), contains ("w12attach_"), contains("w13attach_"), contains("w14attach_"))%>%
+  unite("ID", 1:3, sep = "_") %>%
+  gather("key","value", 2:7) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(ID , into = c( "FamID", "sexor","group"), sep = "_")%>%
+  mutate(total = (attach_A + attach_P)/2)%>%
+  group_by(group, wave)%>%
+  dplyr::summarise(avg = mean(total,na.rm =TRUE))
+
+
+ggplot(attch_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Average Attachment Score by Groups Across Waves ")
+
+```
 
