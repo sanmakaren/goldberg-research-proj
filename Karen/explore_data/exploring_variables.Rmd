@@ -22,6 +22,9 @@ data("Goldberg_rutendo")
 =======
 >>>>>>> 48c5a5c9547b970eee98ba496190c0f2be6b62de
 
+Goldberg_rutendo <- Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2) | (Member_A == 2 & Member_P == 1)) 
+
 Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
 ```
@@ -47,12 +50,12 @@ Goldberg_ppp <-
 Search through variables for information
 ```{r}
 Goldberg_rutendo %>%
-  select(contains('depression')) %>%
+  select(contains('age')) %>%
   names()
 
 var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
 variable_label = sjlabelled::get_label(Goldberg_rutendo))
-var_labels[grep("depres", var_labels$variable_label),]
+var_labels[grep("age", var_labels$variable_label),]
 ```
 
 
@@ -79,6 +82,7 @@ income, age of children,
 percentages of gender
 ```{r}
 Goldberg_perc_gender <- Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2) | (Member_A == 2 & Member_P == 1)) %>%
   group_by(gender_A) %>%
   tally  %>%
   mutate(percent=100* (n/sum(n)))  %>%
@@ -89,6 +93,7 @@ Goldberg_perc_gender
 percentages of racial groups
 ```{r}
 Goldberg_perc_race <- Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2) | (Member_A == 2 & Member_P == 1)) %>%
   group_by(w12Race_A) %>%
   tally  %>%
   mutate(percent=100* (n/sum(n))) %>%
@@ -119,6 +124,11 @@ summary(Goldberg_rutendo$w11PersInc_A)
 summary(Goldberg_rutendo$w14PersInc_A)
 ```
 
+Age of child when came to be with you, in months
+```{r}
+summary(Goldberg_rutendo$w12Age_A)
+```
+
 
 age of children
 ```{r}
@@ -143,13 +153,16 @@ Goldberg_perc_adopt_type <- Goldberg_rutendo %>%
   tally  %>%
   mutate(percent=100* (n/sum(n)))  %>%
   arrange(desc(percent))
+Goldberg_perc_adopt_type
 
 Goldberg_perc_adopt_why <- Goldberg_rutendo %>%
   group_by(w11WhyAdopt_A) %>%
   tally  %>%
   mutate(percent=100* (n/sum(n)))  %>%
   arrange(desc(percent))
+Goldberg_perc_adopt_why
 ```
+
 
 
 
@@ -177,10 +190,18 @@ Goldberg_rutendo %>%
   mutate(w12POC_A = if_else(w12Race_A == 'Caucasian' |
                             w12Race_A == 'Mostly Caucasian (1/8 American Indian)' |
                             w12Race_A == 'Mostly white', 'white','poc' )) %>%
-  select(w12POC_A,w12POC_P) %>%
-  mutate(same_race = if_else(w12POC_A == w12POC_P, 'same_poc_relationship','diff_poc_relationship')) %>%
   group_by(w12POC_A,w12POC_P) %>%
-  tally()
+  tally %>%
+  mutate(percent=100* (n/141)) %>%
+  arrange(desc(percent))
+
+
+Goldberg_rutendo %>%
+  filter(Member_A == 1 & Member_P == 2) %>%
+  group_by(w12Race_A,w12Race_P) %>%
+  tally  %>%
+  mutate(percent=100*n/141)  %>%
+  arrange(desc(percent))
 ```
 
 Report samplesize(number of individuals as well as number ofdyads)
