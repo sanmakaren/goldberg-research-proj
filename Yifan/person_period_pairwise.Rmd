@@ -9,6 +9,7 @@ library(devtools)
 library(papaja)
 library(psysds364data)
 library(dplyr)
+library(feather)
 ```
 
 ```{r}
@@ -49,6 +50,7 @@ count percent drop off
 ```{r}
 Goldberg_ppp[is.na(Goldberg_ppp)] <- 0
 
+levels(Goldberg_ppp$group) <- c("les", "gay", "het")
 # total dyad number 
 
 Goldberg_ppp%>%
@@ -101,7 +103,15 @@ anxiety_stat <- Goldberg_rutendo %>%
   separate(ID , into = c( "FamID", "sexor","group"), sep = "_")%>%
   mutate(total = (seq_A + seq_P)/2)%>%
   group_by(group, wave)%>%
+  filter(wave != "w11")%>%
   dplyr::summarise(avg = mean(total,na.rm =TRUE))
+
+#feather::write_feather(anxiety_stat,"saved_data/anxiety_stat.feather")
+
+ggplot(anxiety_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Average Anxiety Score by Groups Across Waves ")
 
 ```
 
@@ -116,6 +126,8 @@ relationship_stat <- Goldberg_ppp %>%
   mutate(total = (love_A+love_P+cnflct_A+cnflct_P+ambiv_A+ambiv_P+maint_A+maint_P)/8)%>%
   group_by(group, wave)%>%
   dplyr::summarise(avg = mean(total, na.rm = TRUE))
+
+#feather::write_feather(relationship_stat,"saved_data/relationship_stat.feather")
 
 ggplot(relationship_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
@@ -140,6 +152,8 @@ depres_stat <- Goldberg_rutendo%>%
   filter(wave != "w11")%>%
   dplyr::summarise(avg = mean(total,na.rm =TRUE))
 
+#feather::write_feather(depres_stat,"saved_data/depres_stat.feather")
+
 ggplot(depres_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
   geom_point()+
@@ -160,6 +174,7 @@ attch_stat <- Goldberg_rutendo%>%
   group_by(group, wave)%>%
   dplyr::summarise(avg = mean(total,na.rm =TRUE))
 
+#feather::write_feather(attch_stat,"saved_data/attch_stat.feather")
 
 ggplot(attch_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
