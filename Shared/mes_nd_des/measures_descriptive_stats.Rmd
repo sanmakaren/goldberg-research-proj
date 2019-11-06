@@ -121,7 +121,9 @@ Then we examined the average score of parents relationship, attachment, depressi
 ggplot(relationship_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
   geom_point()+
-  labs(title = "Average Relationship Score by Groups Across Waves ") 
+  labs(title = "Average Relationship Score by Groups Across Waves ")+
+  scale_x_discrete("Phases", labels = c("w12" = "Phase_2","w13" = "Phase_3",
+  "w14" = "Phase_4"))
 ```
 
 For the maternal postnatal attachment scale, lesbian parents had a higher average across different phases. We also observed that during phase 2, LG parents experienced a rise in perceived attachment while heterosexual parents experienced a decrease. 
@@ -130,7 +132,9 @@ For the maternal postnatal attachment scale, lesbian parents had a higher averag
 ggplot(attch_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
   geom_point()+
-  labs(title = "Average Attachment Score by Groups Across Waves ") 
+  labs(title = "Average Attachment Score by Groups Across Waves ")+
+  scale_x_discrete("Phases", labels = c("w12" = "Phase_2","w13" = "Phase_3",
+  "w14" = "Phase_4"))
 ```
 
 For the anxiety scale, gay parents experience the most anxiety comparing with other groups. Besides, both gay and heterosexual parents experience an increase in anxiety from phase 3 to phase 4, while lesbian parents experienced a slight decrease. 
@@ -139,7 +143,9 @@ For the anxiety scale, gay parents experience the most anxiety comparing with ot
 ggplot(anxiety_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
   geom_point()+
-  labs(title = "Average Anxiety Score by Groups Across Waves ")
+  labs(title = "Average Anxiety Score by Groups Across Waves ")+
+  scale_x_discrete("Phases", labels = c("w13" = "Phase_3",
+  "w14" = "Phase_4"))
 ```
 
 For the depression scale, both heterosexual and lesbian parents experienced an increase in depression from phase 3 to phase 4, while gay parents experienced a decrease.
@@ -148,7 +154,9 @@ For the depression scale, both heterosexual and lesbian parents experienced an i
 ggplot(depres_stat, aes(x=wave, y=avg, color=group, group=group)) +
   geom_line()+
   geom_point()+
-  labs(title = "Average Depression Score by Groups Across Waves ")
+  labs(title = "Average Depression Score by Groups Across Waves ")+
+  scale_x_discrete("Phases", labels = c("w13" = "Phase_3",
+  "w14" = "Phase_4"))
 ```
 
 By using an ANOVA test we found that sexual orientation (homosexual or heterosexual) was a statistically significant predictor for relationship duration at phase 1. On average, homosexual couples in this study have been in a relationship for 1.7557 years less than heterosexual couples.
