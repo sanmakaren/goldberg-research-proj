@@ -35,11 +35,15 @@ editor_options:
 ```{r setup, include = FALSE}
 library("papaja")
 library("tidyverse")
+library("ggplot2")
 library("psysds364data")
 data("Goldberg")
 data("Goldberg_rutendo")
 Goldberg_rutendo <- Goldberg_rutendo %>%
   filter(Member_A == 1 & Member_P == 2 | Member_A == 2 & Member_P == 1)
+Goldberg_rutendo$sexor <- as_factor(Goldberg_rutendo$sexor)
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
 ```
 
 ```{r analysis-preferences}
@@ -51,6 +55,14 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 
 # Method
+
+## Participant Recruitment
+
+The data come from a larger longitudinal study on the transition to parenthood. To be included, couples had to be first time parents and adopting their first child. Adoption agencies across the US were asked to provide study information to clients seeking to adopt. Effort was made to contact agencies in states that had a high percentage of same-sex couples. Over 30 agencies provided information to clients; interested clients contacted the principal investigator for participation details. Both same-sex and heterosexual couples were targeted through these agencies to facilitate similarity on income and geographic location. Organizations such as the Human Rights Campaign, a gay political organization, also disseminated study information. 
+	
+## Procedure
+
+Both members of each couple were informed of the risks and benefits of the study, gave consent, and participated at pre-adoptive placement (Time 1 or T1) and 2 years post-adoptive placement (T2). At each phase, they were sent a packet of questionnaires to complete and they were interviewed over the phone. Interviews lasted 1-1.5 hours.
 
 ## Measures
 
@@ -112,8 +124,9 @@ summary(fit)
 ```
 
 ```{r}
-ggplot(Goldberg_rutendo_only1, aes(x=sexor, y=w11RelDur_A)) + 
-  geom_boxplot() 
+ggplot(Goldberg_rutendo_only1, aes(x=sexor, y=w11RelDur_A, fill=group)) + 
+  geom_boxplot() +
+  scale_x_discrete(labels = c('Het','Gay'))
 ```
 
 
