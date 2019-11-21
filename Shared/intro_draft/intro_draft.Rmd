@@ -1,0 +1,70 @@
+---
+title             : "Introduction Draft"
+shorttitle        : "SDS/PSY 365"
+author: 
+    
+  - name          : "Karen Santamaria"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "sanmakaren@gmail.com"
+    address       : "1 Chapin Way, Unit 7766, Northampton, MA 01063"
+  - name          : "Yifan Ma"
+    affiliation   : "1"
+  - name          : "Caroline Li"
+    affiliation   : "1"
+  - name          : "Jane Bang"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Smith College"
+bibliography      : ["r-references.bib"]
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library("tidyverse")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+Researchers conceptualized families as complex dynamic systems that were composed of various interactive components and were organized on levels such as the individual level, the dyadic level, and the nuclear family system. Within a family, the dyadic relationship developed in a recursive or iterative fashion and influenced the adjustment of each member of the family and the family as a whole [@van2005dynamic]. Therefore, we may expect that dysregulation or deterioration in one relationship may be negatively associated with other relationships and the process may be conditional dependent in time. While previous studies have shown that conflicts in parental relationships predict a lower quality of parent-child relationships [@cummings1994children; @laurent2008prospective; @klausli2011exploring], the majority of the existing literature dedicated to the association between biological parents’ relationship and the parent-child relationship in heterosexual families. Consequently, little is known about how the relationship within lesbian couple and gay couple (LG) dyads may shape these parents’ attachment to their children. Furthermore, while relationship-quality is assessed, little is known about how anxiety and depression play a role in moderating or mediating the relationship between relationship-quality and attachment. 
+
+Children’s attachment is one of the crucial factors in predicting future misconduct and maladjustment. One study found that infant attachment security moderated the association between parenting in preschool and later aggressive behavior among children at high risk for developing conduct problems [@study3]. Furthermore, other studies have found that behavioral issues during childhood were a significant predictor for behavioral issues during adolescence and adulthood [@fergusson2005show; @reef2011developmental]. Thus, examining factors related to attachment is important because insecure attachment may have lifelong negative effects. 
+
+In adoptive families, children may already come with a past where they may have been exposed to adverse emotional and physical experiences in adoptive families [@van2006emanuel]. Meanwhile, the transition into adoptive parenthood is a stressful time marked by many changes in the daily lives of these parents. Some studies supported increased psychological vulnerability related to adoption [@brodzinsky2014children]. However, research has also shown that there was no difference in the quality of mother and infant attachment between adoptive families and biological families [@singer1985mother]. Additionally, other literature has indicated that adoptive families had more positive expectations and experiences than biological parents [@levy1991transition]. The mix findings highlighted the importance of examining the parent-child attachment in adoptive families. Moreover, @goldberg2009perceived explored the change in perceived parenting skills among lesbian, gay, and heterosexual couples and found that gay men perceived themselves as having the largest increase in skill while lesbians perceived themselves as having the least. This study indicated that the experiences of LG parents differ from the experiences of heterosexual parents. As a result, the differences in the attachment in heterosexual, lesbian, and gay parents are of interest to investigate.
+
+Studies of intimate relationship and psychopathology have established a bidirectional association of relationship functioning and individual mental health. While relationship problems may act as interpersonal stressors that increase the likelihood of a person developing mental disorders, mental health issues may also be accompanied by changes in relationships that are difficult for the partner to accommodate [@whisman2012intimate]. Following this principle, one may speculate that anxiety and depressive symptoms may play roles in the association between love between parents and parent-child attachment. Since studies have shown the essential role of a close, warm, and supportive parent-child relationships for children’s healthy development [@gao2019understanding], it is critical to explore the relationship between love (between parents) and adoptive parents’ attachment to adoptees across time and the roles of anxiety and depressive symptoms. 
+
+Previous studies have established the impact of marital quality on various outcomes. For instance, a study found out that marital quality had significant influences on health trajectories in the general population; negative marriage experiences accelerated declines in self-rated health over time, and positive marriage experiences decreased over time. Moreover, the effects of marital quality on health are similar between men and women [@umberson2006you]. In addition, the association between marital quality and the parent-child relationship has been widely studied by scholars. Research indicated, for example, that fathers who were maritally less satisfied acted negatively to their daughters regardless of daughters’ behaviors. However, there was no evidence for a compensatory bond between less maritally satisfied parents and their same-sex children [@kerig1993marital]. @dickstein2009maternal revealed the link between the quality of couples interaction, family functioning, and infant-mother attachment. They found that the quality of couples interaction predicted family functioning which further predicted infant-mother attachment. When individuals reported a higher level of emotional quality with their spouse, they also reported a better relationship with their child [@gao2019understanding]. Another study supported that that marriage happiness predicted parent-child relationship problems, divorce, and parental affection toward children [@amato1996prospective]. Given the above-mentioned findings, we hypothesized that parental relationship is positively associated with parent-child attachment and will increase the level of attachment across time. Since there is a lack of studies that examine the actor-partner effect in the association, we sought to explore how people’s relationship with their spouse is associated with the partner’s attachment with their children. Since relationships within a family are interconnected, we expected that love (between parents) would be positively associated with the partner’s attachment to children.
+
+Scholars have examined the association between mental health factors such as anxiety and depressive symptoms and dyadic relationships or parent-child attachment. For example, poor dyadic adjustment is found to be associated with both anxiety and depressive symptoms [@stevenson2011maternal]. @stevenson2007anxiety examined anxiety within families. They revealed that maternal anxiety was significantly associated with mothers’ and fathers’ independent ratings of marital satisfaction and to fathers’ own anxiety and depression while fathers’ anxiety was significantly related to mothers’ ratings of marital satisfaction and to maternal anxiety. Meanwhile, @stevenson2011maternal found that both maternal anxiety and children’s behavior inhibition were negatively related to the ratings of children’s attachment and maternal anxiety was a significant predictor for insecure attachment. A study that compared the mother-child attachment style in depressed and non-depressed mothers reported a higher incidence of insecure attachment model in the depressed-mother group compared to the healthy controls [@santona2015maternal]. Despite these established links, none of the studies we found have investigated the interplay of these three factors. According to the previous findings, we hypothesized that the relationship between love and parent-child attachment would be mediated by anxiety and depressive symptoms. We also decided to incorporate the longitudinal aspect to our model because @goldberg2013lesbian have shown that a parent’s perceived attachment with their children varies over time, and both parent-related factors and child-related factors could influence it. As a result, we would also like to predict that the relationship quality between parents at earlier phases in the study will predict parent-child attachment in later phases.
+
+Previous research examining gay-father families found that parenting stress could predict child externalizing problems and gay fathers have a lower level of parenting stress compared with heterosexual parents [@golombok2014adoptive]. We hypothesized that different family structures will result in different correlations between love and parent-child attachment. 
+
+Given what previous research has suggested, such as; there are long term effects of attachment security for a child [@study3;@fergusson2005show; @reef2011developmental]; that dyadic relationships have a ripple or recursive effect on other relationships [@van2005dynamic]; the effect of marital quality may influence health [@umberson2006you]; and the associations between anxiety and depressive symptoms and dyadic relationships or parent-child attachment [@stevenson2011maternal], we found it important to analyze how love experienced and expressed corresponds with parent-child attachment. In addition, since only limited research has focused on the influence of different family structures on the correlation between love and perceived attachment, we decided to incorporate the factor of family structure into our model. Our first hypothesis was that love correlates with attachment and this correlation changes with respect to time point. We also assumed that the correlation between love and attachment is different across family type. Furthermore, we predicted the association between love and attachment is bigger for LG couples than it is for heterosexual couples. Within all these hypotheses, we were also interested in finding if anxiety and/or depression plays a role in moderating or mediating these relationships.
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+
