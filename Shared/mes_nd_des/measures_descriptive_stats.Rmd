@@ -43,7 +43,9 @@ data("Goldberg_rutendo")
 Goldberg_rutendo <- Goldberg_rutendo %>%
   filter(Member_A == 1 & Member_P == 2 | Member_A == 2 & Member_P == 1)
 Goldberg_rutendo$sexor <- as_factor(Goldberg_rutendo$sexor)
+
 Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+
 levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
 
 relationship_stat <- read_feather("saved_data/relationship_stat.feather")
@@ -79,10 +81,10 @@ Parents’ relationship was assessed using the Relationship Questionnaire by Bra
 The Maternal Postnatal Attachment Scale is a 19 items self-report questionnaire to assess mother-to-infant attachment [@condon1997correlates]. Items are rated on a 2, 3, 4, 5 point rating scale, depending on the item. The questionnaire consists of three subscales: Quality of Attachment (9 items), Absence of Hostility (five items), and Pleasure in Interaction (five items). Example items include, “When I am with the baby I feel tense and anxious,” and “When I am caring for the baby, I get feelings of annoyance or irritation.” Due to the missing value issue, we chose to drop item 11 and item 14 in Phase 4. The Cronbach’s alpha for Phase 2 was 0.33, 0.76 for Phase 3, and 0.8 for Phase 4. The intraclass correlation (ICC) was small to moderate, ICC = 0.21 (Phase 2), 0.24 (Phase 3), and 0.34 (Phase 4).
 
 **Depression**
-Depression was assessed using the Center for Epidemiological Studies-Depression Scale (CES-D), which is a 20-item measure developed by the National Institute of Mental Health by Radloff [@ghunney2011beyond]. The example questions include “My sleep was restless” and “I did not feel like eating; my appetite was poor” on a four-point scale from 0--rarely or none of the time (less than 1 day) to 3-- most or all of the time (5-7 days). The scale was reliable; Cronbach’s alpha was 0.89 for both Phase 3 and Phase 4. The intraclass correlation (ICC) was small to moderate. ICC equaled to 0.11 for Phase 3 and 0.3 for Phase 4.
+Depression was assessed using the Center for Epidemiological Studies-Depression Scale (CES-D), which is a 20-item measure developed by the National Institute of Mental Health by Radloff [@ghunney2011beyond]. The example questions include “My sleep was restless” and “I did not feel like eating; my appetite was poor” on a four-point scale from 0--rarely or none of the time (less than 1 day) to 3-- most or all of the time (5-7 days). The scale was reliable; Cronbach’s alpha was 0.89 for both Phase 3 and Phase 4 (data for depression does not exist for Phase 2). The intraclass correlation (ICC) was small to moderate. ICC equaled to 0.11 for Phase 3 and 0.3 for Phase 4.
 
 **Anxiety.**
- The Spielberger State-Trait Anxiety Inventory is a 40 items instrument to measure trait anxiety and state anxiety [@spielberger1983state]. Due to the purpose of our study, only the Trait Anxiety subscale (20 items) is used to assess anxiety as a personality characteristic using a Likert scale ranging between 1 (not at all) to 4 (very much). Example items include: “I worry too much over something that really doesn’t matter” and “I am content; I am a steady person.” The scale was reliable, with Cronbach’s alpha ranged from 0.89 to 0.91. There is nearly no intraclass correlation (ICC). ICC was -0.078 for Phase 3 and 0.0087 for Phase 4.
+ The Spielberger State-Trait Anxiety Inventory is a 40 items instrument to measure trait anxiety and state anxiety [@spielberger1983state]. Due to the purpose of our study, only the Trait Anxiety subscale (20 items) is used to assess anxiety as a personality characteristic using a Likert scale ranging between 1 (not at all) to 4 (very much). Example items include: “I worry too much over something that really doesn’t matter” and “I am content; I am a steady person.” Data for anxiety was present for Phase 3 and 4. The scale was reliable, with Cronbach’s alpha ranged from 0.89 to 0.91. There is nearly no intraclass correlation (ICC). ICC was -0.078 for Phase 3 and 0.0087 for Phase 4.
 
 
 

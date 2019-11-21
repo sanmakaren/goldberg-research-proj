@@ -49,13 +49,13 @@ Goldberg_ppp <-
 
 Search through variables for information
 ```{r}
-Goldberg_rutendo %>%
-  select(contains('age')) %>%
+Goldberg_rutendo%>%
+  select(contains('love')) %>%
   names()
 
-var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
-variable_label = sjlabelled::get_label(Goldberg_rutendo))
-var_labels[grep("age", var_labels$variable_label),]
+var_labels <- data.frame(column_name = colnames(Goldberg_),
+variable_label = sjlabelled::get_label(Goldberg))
+var_labels[grep("rel", var_labels$variable_label),]
 ```
 
 
