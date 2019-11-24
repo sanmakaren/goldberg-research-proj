@@ -1,0 +1,203 @@
+\documentclass[man]{apa6}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Measures and Descriptive Statistics},
+            pdfauthor={Karen Santamaria, Yifan Ma, Caroline Li, \& Jane Bang},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+
+  \title{Measures and Descriptive Statistics}
+    \author{Karen Santamaria\textsuperscript{1}, Yifan Ma\textsuperscript{1}, Caroline Li\textsuperscript{1}, \& Jane Bang\textsuperscript{1}}
+    \date{}
+  
+\shorttitle{SDS/PSY 365}
+\affiliation{
+\vspace{0.5cm}
+\textsuperscript{1} Smith College}
+\usepackage{csquotes}
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+\usepackage{longtable}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[flushleft]{threeparttable}
+\usepackage{threeparttablex}
+
+\newenvironment{lltable}{\begin{landscape}\begin{center}\begin{ThreePartTable}}{\end{ThreePartTable}\end{center}\end{landscape}}
+
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+
+\DeclareDelayedFloatFlavor{ThreePartTable}{table}
+\DeclareDelayedFloatFlavor{lltable}{table}
+\DeclareDelayedFloatFlavor*{longtable}{table}
+\makeatletter
+\renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
+\makeatother
+
+\authornote{
+
+Correspondence concerning this article should be addressed to Karen Santamaria, 1 Chapin Way, Unit 7766, Northampton, MA 01063. E-mail: \href{mailto:sanmakaren@gmail.com}{\nolinkurl{sanmakaren@gmail.com}}}
+
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{method}{%
+\section{Method}\label{method}}
+
+\hypertarget{participant-recruitment}{%
+\subsection{Participant Recruitment}\label{participant-recruitment}}
+
+The data come from a larger longitudinal study on the transition to parenthood. To be included, couples had to be first time parents and adopting their first child. Adoption agencies across the US were asked to provide study information to clients seeking to adopt. Effort was made to contact agencies in states that had a high percentage of same-sex couples. Over 30 agencies provided information to clients; interested clients contacted the principal investigator for participation details. Both same-sex and heterosexual couples were targeted through these agencies to facilitate similarity on income and geographic location. Organizations such as the Human Rights Campaign, a gay political organization, also disseminated study information.
+
+\hypertarget{procedure}{%
+\subsection{Procedure}\label{procedure}}
+
+Both members of each couple were informed of the risks and benefits of the study, gave consent, and participated at pre-adoptive placement (Time 1 or T1) and 2 years post-adoptive placement (T2). At each phase, they were sent a packet of questionnaires to complete and they were interviewed over the phone. Interviews lasted 1-1.5 hours.
+
+\hypertarget{measures}{%
+\subsection{Measures}\label{measures}}
+
+\textbf{Parents Relationship.}
+Parents' relationship was assessed using the Relationship Questionnaire by Braiker and Kelley (Goldberg, Smith, \& Kashy, 2010). The questionnaire contains four subscales: Love (10 items), Conflict (five items), Ambivalence (five items), and Maintenance (five items). Some example items include \enquote{To what extent do you have a sense of \enquote{belonging with your partner?}} (Love), \enquote{How ambivalent are you about continuing in the relationship with your partner?} (Ambivalence), and \enquote{How often do you and your partner argue?} (Conflict). The questions are answered on a 9-point scale (1 not at all to 9 very much). After the correlation analysis, we found item 15 was not associated with other items in the Conflict subscale. Therefore, we chose to drop item 15. The Love subscale was reliable. Cronbach's alpha ranged from 0.83 to 0.86. The intraclass correlation (ICC) was moderate and ranged from 0.46 to 0.49. For the Conflict subscale, Cronbach's alpha ranged from 0.73 to 0.76, which indicated the reliability of the subscale. The intraclass correlation was moderate, ranging from 0.34 to 0.42. For the Ambivalence subscale, Cronbach's alpha ranged from 0.78 to 0.84, which implied high reliability. The intraclass correlation was small to moderate. ICC was 0.19 for Phase 2, 0.12 for Phase 3, and 0.44 for Phase 4. The Cronbach's alpha for the Maintenance subscale was 0.62 for Phase 2, 0.64 for Phase 3, and 0.41 for Phase 4. The intraclass correlation was small; ICC ranged from 0.11 to 0.15.
+
+\textbf{Attachment}
+The Maternal Postnatal Attachment Scale is a 19 items self-report questionnaire to assess mother-to-infant attachment (Condon \& Corkindale, 1997). Items are rated on a 2, 3, 4, 5 point rating scale, depending on the item. The questionnaire consists of three subscales: Quality of Attachment (9 items), Absence of Hostility (five items), and Pleasure in Interaction (five items). Example items include, \enquote{When I am with the baby I feel tense and anxious,} and \enquote{When I am caring for the baby, I get feelings of annoyance or irritation.} Due to the missing value issue, we chose to drop item 11 and item 14 in Phase 4. The Cronbach's alpha for Phase 2 was 0.33, 0.76 for Phase 3, and 0.8 for Phase 4. The intraclass correlation (ICC) was small to moderate, ICC = 0.21 (Phase 2), 0.24 (Phase 3), and 0.34 (Phase 4).
+
+\textbf{Depression}
+Depression was assessed using the Center for Epidemiological Studies-Depression Scale (CES-D), which is a 20-item measure developed by the National Institute of Mental Health by Radloff (Ghunney, 2011). The example questions include \enquote{My sleep was restless} and \enquote{I did not feel like eating; my appetite was poor} on a four-point scale from 0--rarely or none of the time (less than 1 day) to 3-- most or all of the time (5-7 days). The scale was reliable; Cronbach's alpha was 0.89 for both Phase 3 and Phase 4 (data for depression does not exist for Phase 2). The intraclass correlation (ICC) was small to moderate. ICC equaled to 0.11 for Phase 3 and 0.3 for Phase 4.
+
+\textbf{Anxiety.}
+The Spielberger State-Trait Anxiety Inventory is a 40 items instrument to measure trait anxiety and state anxiety (Spielberger, 1983). Due to the purpose of our study, only the Trait Anxiety subscale (20 items) is used to assess anxiety as a personality characteristic using a Likert scale ranging between 1 (not at all) to 4 (very much). Example items include: \enquote{I worry too much over something that really doesn't matter} and \enquote{I am content; I am a steady person.} Data for anxiety was present for Phase 3 and 4. The scale was reliable, with Cronbach's alpha ranged from 0.89 to 0.91. There is nearly no intraclass correlation (ICC). ICC was -0.078 for Phase 3 and 0.0087 for Phase 4.
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\hypertarget{demographics}{%
+\subsection{Demographics}\label{demographics}}
+
+There are 282 individuals recorded in the study where an Actor and a Partner are both present. Within the scope of this study we will exclusively working with these 282 individuals, 141 dyads.
+The dyad relationships were 39.0\% heterosexual, 33.3\% lesbian, and 27.7\% gay.
+The gender makeup of the study is, 52.8\% female and 47.2\% male.
+There are 31 racial/ethnic groups identified in the study with the 8 largest groups being: Caucasian (31.9\%), African American (9.93\%), 1/2 African American and 1/2 Caucasian (7.80\%), Hispanic (7.80\%), Guatemalan (7.45\%), Chinese (7.09\%),Vietnamese (3.55\%), 1/2 Caucasion and 1/2 Hispanic (3.19\%).
+The median personal income for participants in the study was \$55,00 during phase 1 and \$60,000 during phase 4.
+The median age when a child came to be with their parent was 0 years however something to note is that there is one instance where the recorded age was 72, which may due to error in the data.
+The main reason for adoption in this study was due to infertility (43.3\%).
+The dyads were categorized as POC-POC (66.0\%), white-white (32.6\%), POC-white(0.709), and NA-NA (0.709). White was defined as those that idenitified as Caucasian, Mostly Caucasian (1/8 American Indian), and Mostly White. The POC category was an used for all others that were not categorized as white or at least 9/8th's white.
+In terms of education, at phase 1, 32.3\% of individuals in this study have a Master's, 30.9\% have completed college, 14.2\% did not repoort education level, 9.57\% had a PhD, JD or MD, 6.03\% had some college, 3.90\% had a high school diploma, and 3.19\% had an Associate's.
+
+\hypertarget{preliminary-analyses}{%
+\subsection{Preliminary Analyses}\label{preliminary-analyses}}
+
+Besides limiting the participants to the complete dyads, we only include 3 phases from the original Goldberg dataset. Phase 2, 3, and 4 were chosen since perceived attachment was only recorded during those phases. They are therefore limiting the rest of the variables to the three phases as well. Among the 141 complete dyads, 54.96\% dropped off during wave 3, and 17.02\% dropped off during wave 4. The drop off rate also varied across different family structures, only 6 heterosexual parents dropped off during phase 4, while 7 LG parents left the study during phase 3 and 18 LG parents left during phase 4.
+
+Then we examined the average score of parents relationship, attachment, depression, and anxiety across family structure and phases. For the parent relationship scale, we observe a decreasing trend through the development of phases for all three family structures.
+
+\includegraphics{measures_descriptive_stats_files/figure-latex/fig1-1.pdf}
+
+For the maternal postnatal attachment scale, lesbian parents had a higher average across different phases. We also observed that during phase 2, LG parents experienced a rise in perceived attachment while heterosexual parents experienced a decrease.
+
+\includegraphics{measures_descriptive_stats_files/figure-latex/fig2-1.pdf}
+
+For the anxiety scale, gay parents experience the most anxiety comparing with other groups. Besides, both gay and heterosexual parents experience an increase in anxiety from phase 3 to phase 4, while lesbian parents experienced a slight decrease.
+
+\includegraphics{measures_descriptive_stats_files/figure-latex/fig3-1.pdf}
+
+For the depression scale, both heterosexual and lesbian parents experienced an increase in depression from phase 3 to phase 4, while gay parents experienced a decrease.
+
+\includegraphics{measures_descriptive_stats_files/figure-latex/fig4-1.pdf}
+
+By using an ANOVA test we found that sexual orientation (homosexual or heterosexual) was a statistically significant predictor for relationship duration at phase 1. On average, homosexual couples in this study have been in a relationship for 1.7557 years less than heterosexual couples.
+
+\includegraphics{measures_descriptive_stats_files/figure-latex/fig5-1.pdf}
+
+\newpage
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-condon1997correlates}{}%
+Condon, J. T., \& Corkindale, C. (1997). The correlates of antenatal attachment in pregnant women. \emph{British Journal of Medical Psychology}, \emph{70}(4), 359--372.
+
+\leavevmode\hypertarget{ref-ghunney2011beyond}{}%
+Ghunney, A. K.-K. (2011). Beyond race and ethnicity: Predictors of maternal depressive symptoms across the transition to parenthood.
+
+\leavevmode\hypertarget{ref-goldberg2010preadoptive}{}%
+Goldberg, A. E., Smith, J. Z., \& Kashy, D. A. (2010). Preadoptive factors predicting lesbian, gay, and heterosexual couples' relationship quality across the transition to adoptive parenthood. \emph{Journal of Family Psychology}, \emph{24}(3), 221.
+
+\leavevmode\hypertarget{ref-spielberger1983state}{}%
+Spielberger, C. D. (1983). State-trait anxiety inventory for adults.
+
+\endgroup
+
+
+\end{document}
