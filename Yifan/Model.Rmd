@@ -1,0 +1,93 @@
+---
+title: "Model"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(psysds364data)
+library(dplyr)
+library(feather)
+library(nlme)
+library(mosaic)
+```
+
+```{r}
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+
+Goldberg_rutendo <-  Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
+
+var_labels <- data.frame(column_name = colnames(Goldberg_rutendo),
+variable_label = sjlabelled::get_label(Goldberg_rutendo))
+var_labels[grep("depres", var_labels$variable_label),]
+```
+
+### restructuring 
+
+```{r}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))#%>%
+  #mutate(id = row_number())
+
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
+
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
+#ppp: person, period, pairwise
+
+Goldberg_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+
+```
+
+### MLM for wave 3
+```{r}
+ppp_3 <- Goldberg_ppp %>%
+  filter(wave == "w13")
+
+
+mlm <- gls(attach_A ~ relevel(group, ref = "het"), 
+           data = ppp_3,
+           correlation = corCompSymm(form=~1|FamID),
+           na.action = na.omit)
+
+summary(mlm)
+
+
+apim_in <- gls(attach_A ~ love_A + love_P ,
+               data = ppp_3,
+               correlation = corCompSymm(form=~1|FamID),
+               na.action = na.omit)
+
+summary(apim_in)
+```
+
+### longitudinal 
+# Growth Curve modeling 
+
+covariance between slope and intercept 
+optional: time stamp for each dyad 
+
+relationship, pick love 
+
+replace gender with as.factor (member)
+
+```{r}
+
+Goldberg_ppp$FamID <- as.numeric(Goldberg_ppp$FamID)
+
+# rescaling the time
+Goldberg_ppp_c <- Goldberg_ppp %>%
+  mutate(time = ifelse(wave == "w11",-1, ifelse(wave == "w12",0,ifelse(wave == "w13",1,ifelse(wave == "w14",2,NA)))),
+         obsid = time + 3*(FamID-1),
+         month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
+
+
+```
+

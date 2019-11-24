@@ -16,6 +16,7 @@ library(feather)
 data("Goldberg")
 data("Goldberg_rutendo")
 
+
 levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
 
 Goldberg_rutendo <-  Goldberg_rutendo %>%
@@ -32,6 +33,44 @@ Goldberg_yifan <- Goldberg_rutendo %>%
  select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))#%>%
   #mutate(id = row_number())
 
+
+# sub_G <- Goldberg_yifan[c(1:5, 6:13)]
+# 
+# #ppp: person, period, pairwise
+# 
+# sub_G_ppp <- 
+#   unite(sub_G, "F_S_G_A_P", 1:5, sep = "_")%>%
+#   gather("key","value", 2:9)%>%
+#   separate(key, into = c("wave","scale"), sep = 3)%>%
+#   separate(scale, into = c("test", "A/P"), sep = "_")%>%
+#   spread("A/P","value")
+```
+
+```{r}
+drop_off <- Goldberg_yifan[,c(1,4, 6:656)]
+
+drop_off$FeelMC_A <- NULL
+drop_off$FeelMC_P <- NULL
+
+drop <- drop_off %>%
+  unite("ID", 1:2, sep = "_") %>%
+  gather("key","value", 2:650)%>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value")%>%
+  filter(wave != "w11")
+
+drop[is.na(drop)] <- 0
+
+drop_2 <- drop %>%
+  mutate(row_sum = rowSums(drop[3:229]))%>%
+  select(1,2,row_sum)%>%
+  filter(row_sum == 0)%>%
+  group_by(wave)%>%
+  count() # divide the number by 2, 13 family drop at wave 13, 32 dropped at wave 14, however, not everyone who dropped at 13 did not attend 14, see family id 66
+```
+
+
+=======
 sub_G <- Goldberg_yifan[c(1:5, 6:656)]
 
 sub_G$FeelMC_A <- NULL
