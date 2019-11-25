@@ -9,8 +9,11 @@ library(psysds364data)
 library(dplyr)
 library(feather)
 library(nlme)
+library(dyadr)
 library(mosaic)
 ```
+
+
 
 ```{r}
 Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
@@ -88,6 +91,29 @@ Goldberg_ppp_c <- Goldberg_ppp %>%
          obsid = time + 3*(FamID-1),
          month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
 
+```
+
+```{r}
+Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+ctrl <- lmeControl(msMaxIter=10000,
+                   MaxIter=100000,
+                   msMaxEval=10000,
+                   returnObject=TRUE,
+                   niterEM=10000,
+                   nlmStepMax=1000)
+
+dyad <- lme(attach_A ~ time + love_A,
+                      data = Goldberg_ppp_c, 
+                      random = ~ Member_A + Member_A:time  - 1|FamID,
+                      correlation = corCompSymm(form = ~1|FamID/obsid),
+                      weights = varIdent(form = ~1|Member_A),
+                      na.action = na.omit,
+                      control = ctrl)
+
+
+
+summary(dyad)
 
 ```
 
