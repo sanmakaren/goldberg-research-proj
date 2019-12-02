@@ -1,6 +1,8 @@
 ---
 title: "Model"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -9,8 +11,15 @@ library(psysds364data)
 library(dplyr)
 library(feather)
 library(nlme)
+library(dyadr)
 library(mosaic)
 ```
+
+```{r}
+data(Goldberg)
+data(Goldberg_rutendo)
+```
+
 
 ```{r}
 Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
@@ -88,6 +97,66 @@ Goldberg_ppp_c <- Goldberg_ppp %>%
          obsid = time + 3*(FamID-1),
          month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
 
+```
 
+
+
+```{r}
+Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+ctrl <- lmeControl(msMaxIter=10000,
+                   MaxIter=100000,
+                   msMaxEval=10000,
+                   returnObject=TRUE,
+                   niterEM=10000,
+                   nlmStepMax=1000)
+
+dyad <- lme(attach_A ~ time + love_A,
+                      data = Goldberg_ppp_c, 
+                      random = ~ Member_A + Member_A:time  - 1|FamID,
+                      correlation = corCompSymm(form = ~1|FamID/obsid),
+                      weights = varIdent(form = ~1|Member_A),
+                      na.action = na.omit,
+                      control = ctrl)
+
+
+
+summary(dyad)
+
+```
+
+instead of man and women 
+
+```{r}
+options(scipen=999)
+Goldberg_ppp_c <- Goldberg_ppp_c %>%
+  mutate(I1 = ifelse(Member_A == 1, 1, 0),
+         I2 = ifelse(Member_A == 2, 1, 0),
+         I_sum = I1 + I2, 
+         I_diff = I1 - I2, 
+         TIME_sum = time*I_sum, 
+         TIME_diff = time*I_diff)
+
+```
+
+```{r}
+Goldberg_ppp_c_i <- lme(attach_A ~  time,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+Goldberg_ppp_c_ii=summary(Goldberg_ppp_c_i)
+Goldberg_ppp_c_ii
+
+## Subject
+
+intvari=as.numeric(VarCorr(Goldberg_ppp_c_i)[1,1])+as.numeric(VarCorr(Goldberg_ppp_c_i)[3,1]) 
+intcovari=as.numeric(VarCorr(Goldberg_ppp_c_i)[1,1])-as.numeric(VarCorr(Goldberg_ppp_c_i)[3,1])
+slovari=as.numeric(VarCorr(Goldberg_ppp_c_i)[2,1])+as.numeric(VarCorr(Goldberg_ppp_c_i)[4,1]) 
+slocovari=as.numeric(VarCorr(Goldberg_ppp_c_i)[2,1])-as.numeric(VarCorr(Goldberg_ppp_c_i)[4,1])
+
+intslow= as.numeric(getVarCov(Goldberg_ppp_c_i)[2,1])+as.numeric(getVarCov(Goldberg_ppp_c_i)[4,3])
+intslob= as.numeric(getVarCov(Goldberg_ppp_c_i)[2,1])-as.numeric(getVarCov(Goldberg_ppp_c_i)[4,3])
 ```
 
