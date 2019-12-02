@@ -145,7 +145,17 @@ Goldberg_ppp_c_i <- lme(attach_A ~  time + love_A + love_P + group + feel_A + fe
                         data = Goldberg_ppp_c, 
                         random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
                         correlation = corCompSymm(form = ~1|FamID/obsid),
-                        na.action  na.omit)
+                        na.action = na.omit)
+
+Goldberg_ppp_c_ii=summary(Goldberg_ppp_c_i)
+Goldberg_ppp_c_ii
+
+
+Goldberg_ppp_c_i <- lme(attach_A ~  time + seq_A ,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
 
 Goldberg_ppp_c_ii=summary(Goldberg_ppp_c_i)
 Goldberg_ppp_c_ii
