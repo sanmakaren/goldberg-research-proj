@@ -1,0 +1,89 @@
+---
+title             : "Introduction Draft"
+shorttitle        : "SDS/PSY 365"
+author: 
+    
+  - name          : "Karen Santamaria"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "sanmakaren@gmail.com"
+    address       : "1 Chapin Way, Unit 7766, Northampton, MA 01063"
+  - name          : "Yifan Ma"
+    affiliation   : "1"
+  - name          : "Caroline Li"
+    affiliation   : "1"
+  - name          : "Jane Bang"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Smith College"
+bibliography      : ["r-references.bib"]
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(png)
+figure1 <- readPNG("figure1.png")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+
+```
+
+```{r, fig.cap = "caption", fig.align = "center",out.width = "500px"}
+knitr::include_graphics("figure1.png", dpi = 600)
+```
+
+```{r, fig.cap = "caption", fig.align = "center",out.width = "500px"}
+knitr::include_graphics("figure2.png", dpi = 600)
+```
+
+# Results
+
+
+## Analysis Strategy 
+We hypothesized that the individuals’ perception of love and their partner’s perception of love in their relationship would affect the parent-child relationship positively and associations would become stronger over time (hypothesis 1). We also hypothesized that the correlation between love and parent-child attachment would be different across family types (hypothesis 2). Furthermore, we hypothesized that depressive and anxiety symptoms play mediating roles in the association between love and attachment (hypotheses 3 and 4). We used multilevel modeling and the Actor-Partner Interdependence Model (APIM; Kenny, Kashy, & Cook, 2006) to test these hypotheses. The APIM (see Figure 1&2) does THIS, and THIS. Most importantly, it does THIS and THIS. <- something about the correlated errors to account for the non-independence.  
+
+We first used the following explanatory variables: 1) actor’s perception of love in the relationship, 2) partner’s perception of love in the relationship, 4) time. The response variable was actor's attachment. To test if anxiety (of the actor) mediates love we used the Monte Carlo method [@monte] for assessing mediation which created confidence intervals for indirect effects.
+
+## Main Results
+
+### Hyp1:
+In our first model, there was a statistically significant effect of the individuals’ perception of love on the perceived parent-child attachment for that individual, such that the higher the perception of love the more the person perceived that they were attached to their children , b = 0.11,  SE = 0.019 , p = 0.000. Nevertheless, a person’s partner’s perception of love in their relationship did not show statistical significant on neither themselves’s nor their partner’s perceived parent-child attachment. We also found that time was not a statistically significant moderator for the correlation between love and attachment, such as the correlation between love and attachment for a person at time point one does not predict the correlation between love and attachment for a person at the following time point.
+
+### Hyp2:
+We did not find the interaction of different family types on the correlation between love and parent-child attachment with respect to time point statistically significant. 
+
+### Hyp3:
+In our third model, there was a statistically significant actor effect of anxiety on attachment, such that the higher the person’s anxiety the less the person perceived that they are attached to their children , b = -0.31, SE = 0.041, p = 0.000.
+We also found that the relationship between love and attachment is (positively/negatively) mediated by anxiety.  b = 0.27, SE = 0.045, p = .002. 
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup
