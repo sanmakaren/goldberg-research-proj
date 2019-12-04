@@ -56,6 +56,7 @@ mcmamCI <- function(aval, bval, varA, varB, n){
 
   CI <- cbind.data.frame(LL, UL)
   return(CI)
+  
 
 }
 ```
@@ -166,7 +167,7 @@ hyp1 <- lme(attach_A ~  time + love_A + love_P,
                         correlation = corCompSymm(form = ~1|FamID/obsid),
                         na.action = na.omit)
 
-summary(hyp1)
+hyp_1_results = summary(hyp1)
 ```
 
 ```{r}
@@ -176,7 +177,7 @@ hyp2 <- lme(attach_A ~  time + love_A*group + love_P*group,
                         correlation = corCompSymm(form = ~1|FamID/obsid),
                         na.action = na.omit)
 
-summary(hyp2)
+hyp_2_results = summary(hyp2)
 ```
 
 
@@ -224,6 +225,10 @@ act_H_b_se <- coef(summary(stp3_anxiety))[5,2]
 mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
 ```
 
+Assuming the sample dist is normal and centered 
+
+
+
 ```{r}
 #depression mediation
 stp1_dep <- lme(attach_A ~  time + love_A + love_P,
@@ -259,15 +264,77 @@ mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
 
 ```
 
-```{r}
-## number stuff edit this code with summary(model) as arguement :) 
-intvari=as.numeric(VarCorr( results )[1,1])+as.numeric(VarCorr(results)[3,1]) 
-intcovari=as.numeric(VarCorr(reduced_model_results)[1,1])-as.numeric(VarCorr(reduced_model_results)[3,1])
-slovari=as.numeric(VarCorr(reduced_model_results)[2,1])+as.numeric(VarCorr(reduced_model_results)[4,1]) 
-slocovari=as.numeric(VarCorr(reduced_model_results)[2,1])-as.numeric(VarCorr(reduced_model_results)[4,1])
 
-intslow= as.numeric(getVarCov(reduced_model_results)[2,1])+as.numeric(getVarCov(reduced_model_results)[4,3])
-intslob= as.numeric(getVarCov(reduced_model_results)[2,1])-as.numeric(getVarCov(reduced_model_results)[4,3])
+
+```{r}
+
+## create tibble with results for hyp1 
+intvari=as.numeric(VarCorr( hyp_1_results )[1,1])+as.numeric(VarCorr(hyp_1_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_1_results)[1,1])-as.numeric(VarCorr(hyp1)[3,1])
+slovari=as.numeric(VarCorr(hyp_1_results)[2,1])+as.numeric(VarCorr(hyp_1_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_1_results)[2,1])-as.numeric(VarCorr(hyp_1_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_1_results)[2,1])+as.numeric(getVarCov(hyp_1_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_1_results)[2,1])-as.numeric(getVarCov(hyp_1_results)[4,3])
+
+
+trial <- matrix(c(1,
+                  round(intvari,6),
+                  round(intcovari,6),
+                  round(intcovari/intvari,6),
+                  round(slovari,6),
+                  round(slocovari,6),
+                  round(slocovari/slovari,6),
+                  round(as.numeric(intslow),6),
+                  round(intslow/sqrt(intvari*slovari),6),
+                  round(as.numeric(intslob),6),
+                  round(intslob/sqrt(intvari*slovari),6)
+                  ), ncol=11)
+
+
+
+
+
+colnames(trial) <- c('hypothesis',
+                      'intercept_variance',
+                     'intercept covariance',
+                     'Correlation between intercepts',
+                     'slope variance',
+                     'slope covariance',
+                     'Correlation between the slopes',
+                     'Slope-intercept covariance (within a person)',
+                     'Slope-intercept correlation (within a person)',
+                     'Slope-intercept covariance (between persons)',
+                     'Slope-intercept correlation (between a person)')
+
+
+trial = as_tibble(trial)
+
+```
+
+```{r}
+#add hyp2 to results table
+intvari=as.numeric(VarCorr( hyp_2_results )[1,1])+as.numeric(VarCorr(hyp_2_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_2_results)[1,1])-as.numeric(VarCorr(hyp_2_results)[3,1])
+slovari=as.numeric(VarCorr(hyp_2_results)[2,1])+as.numeric(VarCorr(hyp_2_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_2_results)[2,1])-as.numeric(VarCorr(hyp_2_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_2_results)[2,1])+as.numeric(getVarCov(hyp_2_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_2_results)[2,1])-as.numeric(getVarCov(hyp_2_results)[4,3])
+
+add_row(trial, 
+        'hypothesis' = 2,
+        'intercept_variance' = round(intvari,6),
+        'intercept covariance' = round(intcovari,6),
+        'Correlation between intercepts' = round(intcovari/intvari,6),
+        'slope variance' = round(slovari,6),
+        'slope covariance' = round(slocovari,6),
+        'Correlation between the slopes' = round(slocovari/slovari,6),
+        'Slope-intercept covariance (within a person)' = round(as.numeric(intslow),6),
+        'Slope-intercept correlation (within a person)' = round(intslow/sqrt(intvari*slovari),6),
+        'Slope-intercept covariance (between persons)' = round(as.numeric(intslob),6),
+        'Slope-intercept correlation (between a person)' = round(intslob/sqrt(intvari*slovari),6)
+        )
 ```
 
 The intercept variance: `r round(intvari,6)`  
