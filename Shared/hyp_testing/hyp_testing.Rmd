@@ -1,0 +1,290 @@
+---
+title: "Model"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(psysds364data)
+library(dplyr)
+library(feather)
+library(dyadr)
+library(mosaic)
+```
+
+```{r}
+data(Goldberg)
+data(Goldberg_rutendo)
+```
+
+
+```{r}
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+
+Goldberg_rutendo <-  Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
+```
+
+```{r}
+#Function that returns mcmc CI. 
+mcmamCI <- function(aval, bval, varA, varB, n){
+
+#code (Selig & Preacher, 2008).
+  require(MASS)
+  
+  a=aval
+  b=bval
+  rep=n
+  conf=95
+  pest=c(a,b)
+  acov <- matrix(c(varA, 0, 0, varB),2,2)
+
+  mcmc <- mvrnorm(rep,pest,acov,empirical=FALSE)
+
+  ab <- mcmc[,1]*mcmc[,2]
+
+  low=(1-conf/100)/2
+  upp=((1-conf/100)/2)+(conf/100)
+
+  LL=quantile(ab,low)
+  UL=quantile(ab,upp)
+  LL=format(LL,digits=3)
+  UL=format(UL,digits=3)
+
+  CI <- cbind.data.frame(LL, UL)
+  return(CI)
+
+}
+```
+
+### restructuring 
+
+```{r}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ dplyr::select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
+
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
+
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
+#ppp: person, period, pairwise
+
+Goldberg_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+
+```
+
+```{r}
+
+Goldberg_ppp$FamID <- as.numeric(Goldberg_ppp$FamID)
+
+# rescaling the time
+Goldberg_ppp_c <- Goldberg_ppp %>%
+  mutate(time = ifelse(wave == "w11",-1, ifelse(wave == "w12",0,ifelse(wave == "w13",1,ifelse(wave == "w14",2,NA)))),
+         obsid = time + 3*(FamID-1),
+         month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
+
+```
+
+
+
+```{r}
+Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+ctrl <- lmeControl(msMaxIter=10000,
+                   MaxIter=100000,
+                   msMaxEval=10000,
+                   returnObject=TRUE,
+                   niterEM=10000,
+                   nlmStepMax=1000)
+```
+
+
+```{r}
+options(scipen=999)
+Goldberg_ppp_c <- Goldberg_ppp_c %>%
+  mutate(I1 = ifelse(Member_A == 1, 1, 0),
+         I2 = ifelse(Member_A == 2, 1, 0),
+         I_sum = I1 + I2, 
+         I_diff = I1 - I2, 
+         TIME_sum = time*I_sum, 
+         TIME_diff = time*I_diff)
+
+```
+
+### longitudinal 
+# Growth Curve modeling 
+
+covariance between slope and intercept 
+optional: time stamp for each dyad 
+
+relationship, pick love 
+
+replace gender with as.factor (member)
+
+
+```{r}
+#exploratory
+full_model <- lme(attach_A ~  time + love_A + love_P + group + feel_A + feel_P + seq_A + seq_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+full_model_results=summary(full_model)
+full_model_results
+
+#ran full model found that only anxiety was significant
+
+reduced_model <- lme(attach_A ~  time + seq_A ,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+reduced_model_results=summary(reduced_model)
+reduced_model_results
+#reduced model with time and anxiety
+#write about that anxiety at timepoint x is significant predictor for attachment at timepoint x
+
+
+
+```
+
+
+```{r}
+hyp1 <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+summary(hyp1)
+```
+
+```{r}
+hyp2 <- lme(attach_A ~  time + love_A*group + love_P*group,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+summary(hyp2)
+```
+
+
+
+our anxiety at this wave is related to attachment at that wave
+
+times * anxiety related to attachment 
+
+
+
+```{r}
+#testing for anxiety as mediator
+
+stp1_anxiety <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_anxiety <- lme(seq_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+stp3_anxiety <- lme(attach_A ~  time + love_A + love_P + seq_A + seq_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+act_H_a <- coef(summary(stp2_anxiety))[3,1]
+act_H_a_se <- coef(summary(stp2_anxiety))[3,2]
+act_H_b <- coef(summary(stp3_anxiety))[5,1]
+act_H_b_se <- coef(summary(stp3_anxiety))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+```
+
+```{r}
+#depression mediation
+stp1_dep <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_dep <- lme(feel_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+stp3_dep <- lme(attach_A ~  time + love_A + love_P + feel_A + feel_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+act_H_a <- coef(summary(stp2_dep))[3,1]
+act_H_a_se <- coef(summary(stp2_dep))[3,2]
+act_H_b <- coef(summary(stp3_dep))[5,1]
+act_H_b_se <- coef(summary(stp3_dep))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+
+```
+
+```{r}
+## number stuff edit this code with summary(model) as arguement :) 
+intvari=as.numeric(VarCorr( results )[1,1])+as.numeric(VarCorr(results)[3,1]) 
+intcovari=as.numeric(VarCorr(reduced_model_results)[1,1])-as.numeric(VarCorr(reduced_model_results)[3,1])
+slovari=as.numeric(VarCorr(reduced_model_results)[2,1])+as.numeric(VarCorr(reduced_model_results)[4,1]) 
+slocovari=as.numeric(VarCorr(reduced_model_results)[2,1])-as.numeric(VarCorr(reduced_model_results)[4,1])
+
+intslow= as.numeric(getVarCov(reduced_model_results)[2,1])+as.numeric(getVarCov(reduced_model_results)[4,3])
+intslob= as.numeric(getVarCov(reduced_model_results)[2,1])-as.numeric(getVarCov(reduced_model_results)[4,3])
+```
+
+The intercept variance: `r round(intvari,6)`  
+The intercept covariance: `r round(intcovari,6)`  
+Correlation between intercepts: `r round(intcovari/intvari,6)`  
+The slope variance: `r round(slovari,6)`  
+The slope covariance: `r round(slocovari,6)`  
+Correlation between the slopes: `r round(slocovari/slovari,6)`  
+Slope-intercept covariance (within a person): `r round(as.numeric(intslow),6)`    
+Slope-intercept correlation (within a person): `r round(intslow/sqrt(intvari*slovari),6)` 
+Slope-intercept covariance (between persons): `r round(as.numeric(intslob),6)`  
+Slope-intercept correlation (between a person): `r round(intslob/sqrt(intvari*slovari),6)` 
+
+
+
+
+
+
+
+
