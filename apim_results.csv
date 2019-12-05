@@ -1,0 +1,2 @@
+hypothesis,intercept_variance,intercept covariance,Correlation between intercepts,slope variance,slope covariance,Correlation between the slopes,Slope-intercept covariance (within a person),Slope-intercept correlation (within a person),Slope-intercept covariance (between persons),Slope-intercept correlation (between a person)
+1,0.054474,0.017854,0.327749,6.43e-4,6.13e-4,0.953704,0.004244,0.717092,0.005288,0.893507
