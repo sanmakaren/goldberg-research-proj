@@ -6,7 +6,7 @@
 
 }
 
-\caption{caption}\label{fig:unnamed-chunk-1}
+\caption{Love and attachment mediated by anxiety}\label{fig:unnamed-chunk-1}
 \end{figure*}
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
@@ -16,5 +16,5 @@
 
 }
 
-\caption{caption}\label{fig:unnamed-chunk-2}
+\caption{Love and attachment mediated by depression}\label{fig:unnamed-chunk-2}
 \end{figure*}

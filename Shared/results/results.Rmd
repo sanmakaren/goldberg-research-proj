@@ -1,5 +1,5 @@
 ---
-title             : "Introduction Draft"
+title             : "Results Draft"
 shorttitle        : "SDS/PSY 365"
 author: 
     
@@ -45,34 +45,319 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 ```
 
-```{r, fig.cap = "caption", fig.align = "center",out.width = "500px"}
+```{r, fig.cap = "Love and attachment mediated by anxiety", fig.align = "center",out.width = "500px"}
 knitr::include_graphics("figure1.png", dpi = 600)
 ```
 
-```{r, fig.cap = "caption", fig.align = "center",out.width = "500px"}
+```{r, fig.cap = "Love and attachment mediated by depression", fig.align = "center",out.width = "500px"}
 knitr::include_graphics("figure2.png", dpi = 600)
 ```
 
+```{r,include = FALSE}
+library(tidyverse)
+library(psysds364data)
+library(dplyr)
+library(feather)
+library(dyadr)
+library(mosaic)
+```
+
+```{r,include = FALSE}
+data(Goldberg)
+data(Goldberg_rutendo)
+```
+
+
+```{r,include = FALSE}
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+
+Goldberg_rutendo <-  Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
+```
+
+```{r,include = FALSE}
+#Function that returns mcmc CI. 
+mcmamCI <- function(aval, bval, varA, varB, n){
+
+#code (Selig & Preacher, 2008).
+  require(MASS)
+  
+  a=aval
+  b=bval
+  rep=n
+  conf=95
+  pest=c(a,b)
+  acov <- matrix(c(varA, 0, 0, varB),2,2)
+
+  mcmc <- mvrnorm(rep,pest,acov,empirical=FALSE)
+
+  ab <- mcmc[,1]*mcmc[,2]
+
+  low=(1-conf/100)/2
+  upp=((1-conf/100)/2)+(conf/100)
+
+  LL=quantile(ab,low)
+  UL=quantile(ab,upp)
+  LL=format(LL,digits=3)
+  UL=format(UL,digits=3)
+
+  CI <- cbind.data.frame(LL, UL)
+  return(CI)
+  
+
+}
+```
+
+
+
+```{r,include = FALSE}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ dplyr::select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
+
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
+
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
+#ppp: person, period, pairwise
+
+Goldberg_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+
+```
+
+```{r,include = FALSE}
+
+Goldberg_ppp$FamID <- as.numeric(Goldberg_ppp$FamID)
+
+# rescaling the time
+Goldberg_ppp_c <- Goldberg_ppp %>%
+  mutate(time = ifelse(wave == "w11",-1, ifelse(wave == "w12",0,ifelse(wave == "w13",1,ifelse(wave == "w14",2,NA)))),
+         obsid = time + 3*(FamID-1),
+         month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
+
+```
+
+
+
+```{r,include = FALSE}
+Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+ctrl <- lmeControl(msMaxIter=10000,
+                   MaxIter=100000,
+                   msMaxEval=10000,
+                   returnObject=TRUE,
+                   niterEM=10000,
+                   nlmStepMax=1000)
+```
+
+
+```{r,include = FALSE}
+options(scipen=999)
+Goldberg_ppp_c <- Goldberg_ppp_c %>%
+  mutate(I1 = ifelse(Member_A == 1, 1, 0),
+         I2 = ifelse(Member_A == 2, 1, 0),
+         I_sum = I1 + I2, 
+         I_diff = I1 - I2, 
+         TIME_sum = time*I_sum, 
+         TIME_diff = time*I_diff)
+
+```
+
+
+
+
+
+
+```{r,include = FALSE}
+hyp1 <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+hyp_1_results = summary(hyp1)
+```
+
+```{r,include = FALSE}
+hyp2 <- lme(attach_A ~  time + love_A*group + love_P*group,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+hyp_2_results = summary(hyp2)
+```
+
+
+
+
+```{r,include = FALSE}
+#testing for anxiety as mediator
+
+stp1_anxiety <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_anxiety <- lme(seq_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+stp3_anxiety <- lme(attach_A ~  time + love_A + love_P + seq_A + seq_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+act_H_a <- coef(summary(stp2_anxiety))[3,1]
+act_H_a_se <- coef(summary(stp2_anxiety))[3,2]
+act_H_b <- coef(summary(stp3_anxiety))[5,1]
+act_H_b_se <- coef(summary(stp3_anxiety))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+```
+
+
+
+
+```{r,include=FALSE}
+#depression mediation
+stp1_dep <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_dep <- lme(feel_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+stp3_dep <- lme(attach_A ~  time + love_A + love_P + feel_A + feel_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+act_H_a <- coef(summary(stp2_dep))[3,1]
+act_H_a_se <- coef(summary(stp2_dep))[3,2]
+act_H_b <- coef(summary(stp3_dep))[5,1]
+act_H_b_se <- coef(summary(stp3_dep))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+
+```
+
+
+
+```{r,include = FALSE}
+
+## create tibble with results for hyp1 
+intvari=as.numeric(VarCorr( hyp_1_results )[1,1])+as.numeric(VarCorr(hyp_1_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_1_results)[1,1])-as.numeric(VarCorr(hyp1)[3,1])
+slovari=as.numeric(VarCorr(hyp_1_results)[2,1])+as.numeric(VarCorr(hyp_1_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_1_results)[2,1])-as.numeric(VarCorr(hyp_1_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_1_results)[2,1])+as.numeric(getVarCov(hyp_1_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_1_results)[2,1])-as.numeric(getVarCov(hyp_1_results)[4,3])
+```
+
+
+
+
+
+
+```{r}
+test<-summary(hyp1)$tTable
+apa_table(test,
+          caption = "Predicting attachment with time and love",
+          escape = TRUE
+)
+```
+
+```{r}
+test<-summary(hyp2)$tTable
+apa_table(test,
+          caption = "Predicting attachment with time and love and group*love interaction",
+          escape = TRUE
+)
+```
+
+
 # Results
 
-
-## Analysis Strategy 
-We hypothesized that the individuals’ perception of love and their partner’s perception of love in their relationship would affect the parent-child relationship positively and associations would become stronger over time (hypothesis 1). We also hypothesized that the correlation between love and parent-child attachment would be different across family types (hypothesis 2). Furthermore, we hypothesized that depressive and anxiety symptoms play mediating roles in the association between love and attachment (hypotheses 3 and 4). We used multilevel modeling and the Actor-Partner Interdependence Model (APIM; Kenny, Kashy, & Cook, 2006) to test these hypotheses. The APIM (see Figure 1&2) does THIS, and THIS. Most importantly, it does THIS and THIS. <- something about the correlated errors to account for the non-independence.  
-
-We first used the following explanatory variables: 1) actor’s perception of love in the relationship, 2) partner’s perception of love in the relationship, 4) time. The response variable was actor's attachment. To test if anxiety (of the actor) mediates love we used the Monte Carlo method [@monte] for assessing mediation which created confidence intervals for indirect effects.
+## Analysis Strategy
+We hypothesized that the individuals’ perception of love and their partner’s perception of love in their relationship would affect the parent-child relationship positively and associations would become stronger over time (hypothesis 1). We also hypothesized that the correlation between love and parent-child attachment would be different across family types (hypothesis 2). Furthermore, we hypothesized that depressive and anxiety symptoms play mediating roles in the association between love and attachment (hypotheses 3 and 4). We used multilevel modeling and the Actor-Partner Interdependence Model (APIM; @apim) to test these hypotheses. The APIM simultaneously estimates the effect of one’s perception of love in the relationship and the effect of the same variable but from the partner on parent-child attachment. Since our data was divided into three waves, the growth curve model was used. Given the characteristics of APIM and longitudinal data, we need to check for the intercept covariance, slope covariance, and slope-intercept covariance.
+In our first hypothesis we used the following explanatory variables: 1) the actor's perception of love in the relationship, 2) partner’s perception of love in the relationship, 4) time. The response variable was actor's attachment. In our second hypothesis we added an interaction between love and actor-partner relationship type (lesbian, gay, or hetersexual). 
+In our third and fourth hypothesis we tested whether anxiety and depression of the actor could be potential mediators between the correlation of love of the actor and the actor’s perceived attachment. Figures 1 and 2 provide a visual examples of what mediation looks like within a APIM. We used the Monte Carlo method [@monte] for assessing mediation which created confidence intervals for indirect effects.
 
 ## Main Results
 
-### Hyp1:
-In our first model, there was a statistically significant effect of the individuals’ perception of love on the perceived parent-child attachment for that individual, such that the higher the perception of love the more the person perceived that they were attached to their children , b = 0.11,  SE = 0.019 , p = 0.000. Nevertheless, a person’s partner’s perception of love in their relationship did not show statistical significant on neither themselves’s nor their partner’s perceived parent-child attachment. We also found that time was not a statistically significant moderator for the correlation between love and attachment, such as the correlation between love and attachment for a person at time point one does not predict the correlation between love and attachment for a person at the following time point.
+### Hypothesis 1:
 
-### Hyp2:
-We did not find the interaction of different family types on the correlation between love and parent-child attachment with respect to time point statistically significant. 
+```{r,include = FALSE}
 
-### Hyp3:
-In our third model, there was a statistically significant actor effect of anxiety on attachment, such that the higher the person’s anxiety the less the person perceived that they are attached to their children , b = -0.31, SE = 0.041, p = 0.000.
-We also found that the relationship between love and attachment is (positively/negatively) mediated by anxiety.  b = 0.27, SE = 0.045, p = .002. 
+## create tibble with results for hyp1 
+intvari=as.numeric(VarCorr( hyp_1_results )[1,1])+as.numeric(VarCorr(hyp_1_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_1_results)[1,1])-as.numeric(VarCorr(hyp_1_results)[3,1])
+slovari=as.numeric(VarCorr(hyp_1_results)[2,1])+as.numeric(VarCorr(hyp_1_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_1_results)[2,1])-as.numeric(VarCorr(hyp_1_results)[4,1])
 
+intslow= as.numeric(getVarCov(hyp_1_results)[2,1])+as.numeric(getVarCov(hyp_1_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_1_results)[2,1])-as.numeric(getVarCov(hyp_1_results)[4,3])
+```
+In our first model, there was a statistically significant effect of the individuals’ perception of love on the perceived parent-child attachment for that individual, such that the higher the perception of love the more the person perceived that they were attached to their children, b = 0.11,  SE = 0.019, p = 0.000. Nevertheless, a person’s partner’s perception of love in their relationship did not show statistically significant effects on neither themselves’s nor their partner’s perceived parent-child attachment. We also found that time was not statistically significant moderator for the correlation between love and attachment, such as the correlation between love and attachment for a person at time point one does not predict the correlation between love and attachment for a person at the following time point. In the model the intercept variance was `r round(intvari,6)`, intercept covariance was `r round(intcovari,6)`, and correlation between intercepts was `r round(intcovari/intvari,6)`. In regards to slope, the slope variance was `r round(slovari,6)`, the slope covariance was `r round(slocovari,6)`, correlation between the slopes was `r round(slocovari/slovari,6)`, slope-intercept covariance (within a person) was `r round(as.numeric(intslow),6)`, slope-intercept correlation (within a person) was `r round(intslow/sqrt(intvari*slovari),6)`, slope-intercept covariance (between persons) was `r round(as.numeric(intslob),6)`, and slope-intercept correlation (between a person) was `r round(intslob/sqrt(intvari*slovari),6)`.Further details on the outcomes for the hypothesis test are provided in Table 1.
+
+
+
+
+### Hypothesis 2:
+
+```{r,include = FALSE}
+#add hyp2 to results table
+intvari=as.numeric(VarCorr( hyp_2_results )[1,1])+as.numeric(VarCorr(hyp_2_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_2_results)[1,1])-as.numeric(VarCorr(hyp_2_results)[3,1])
+slovari=as.numeric(VarCorr(hyp_2_results)[2,1])+as.numeric(VarCorr(hyp_2_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_2_results)[2,1])-as.numeric(VarCorr(hyp_2_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_2_results)[2,1])+as.numeric(getVarCov(hyp_2_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_2_results)[2,1])-as.numeric(getVarCov(hyp_2_results)[4,3])
+```
+
+For our second hypothesis, we predicted that the correlations perception of love and parent-child attachment would be different across family types. Contradict to our prediction, we did not find the interaction of different family types on the correlation between love and parent-child attachment with respect to time point statistically significant. In the model the intercept variance was `r round(intvari,6)`, intercept covariance was `r round(intcovari,6)`, and correlation between intercepts was `r round(intcovari/intvari,6)`. In regards to slope, the slope variance was `r round(slovari,6)`, the slope covariance was `r round(slocovari,6)`, correlation between the slopes was `r round(slocovari/slovari,6)`, slope-intercept covariance (within a person) was `r round(as.numeric(intslow),6)`, slope-intercept correlation (within a person) was `r round(intslow/sqrt(intvari*slovari),6)`, slope-intercept covariance (between persons) was `r round(as.numeric(intslob),6)`, and slope-intercept correlation (between a person) was `r round(intslob/sqrt(intvari*slovari),6)`. Further details on the outcomes for the hypothesis test one are provided in Table 2.
+
+
+
+
+
+### Hypothesis 3:                    
+In order to determine if anxiety mediates the relationship between perceived love in the parental relationship and parent-child relationship, a series of regression analyses were conducted. First, the love reported in the parental relationship (b = 0.11, SE = 0.041, p = 0.0000) significantly predicted parent-child attachment. Next, we found that the trait of anxiety was significantly predicted by an individual's perception of love in the relationship (b = -0.11, SE = 0.021, p = 0.0000). Finally, we found that an individual's perception of love (b = 0.067, SE = 0.022, p = 0.0032) and the trait of anxiety (b = -0.33, SE = 0.046, p = 0.0000) together significantly predicted parent-child attachment. The results revealed that anxiety negative mediated the relationship between the perceived love in one’s relationship and the perceived attachment to one’s child. Finally, we used the Monte Carlo method [@monte] and found that the indirect effect of the mediation is statistically significant (CI ranges from 0.0199 to 0.0524).
+### Hypothesis 4:
+In our fourth model, we found that there was a statistically significant mediation effect of depression on the correlation between love and attachment. In our previous model, we learned that there was a significant correlation between the actor’s love and the actor’s attachment. Then we tested and found that there was a statically significant actor effect of love on depression, such that the actor’s depression level decreased with the increase of their own perceived love, b = -0.098, SE = 0.019, p = 0.000. We further tested the direct effect of actor’s love and their depression on attachment in a full model and found that both the actor effect of love(b = 0.077, SE = 0.023, p = 0.0008) and depression(b = -0.27, SE = 0.046, p = 0.0000) were statistically correlated with attachment. This mediation was such that a person who was high in perceived love had a lower level of depression, while a higher level of depression also negatively influence their perceived parent-child attachment. Finally, we used the Monte Carlo method [@monte] and found that the indirect effect of the mediation is statistically significant (CI ranges from 0.0194 to 0.0532).
+In the full model, we also found time as a statistically significant predictor for the correlation between depression and love to attachment (b = -0.065, SE = 0.032, p = 0.043); however, we deduced the significance to be inconclusive since we did not find significant correlation with either attachment or love.
 
 \newpage
 
