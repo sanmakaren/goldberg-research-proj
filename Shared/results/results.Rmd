@@ -71,6 +71,8 @@ data(Goldberg_rutendo)
 ```{r,include = FALSE}
 Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
 levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+Goldberg_rutendo$group <- factor( Goldberg_rutendo$group , ordered = FALSE )
+Goldberg_rutendo$group <- relevel(Goldberg_rutendo$group, ref = 'het')
 
 Goldberg_rutendo <-  Goldberg_rutendo %>%
   filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
@@ -115,6 +117,9 @@ mcmamCI <- function(aval, bval, varA, varB, n){
 Goldberg_yifan <- Goldberg_rutendo %>%
  dplyr::select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
 
+
+
+
 sub_G <- Goldberg_yifan[c(1:5, 6:656)]
 
 sub_G$FeelMC_A <- NULL
@@ -146,6 +151,9 @@ Goldberg_ppp_c <- Goldberg_ppp %>%
 
 ```{r,include = FALSE}
 Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+Goldberg_ppp_c$group <- factor( Goldberg_ppp_c$group , ordered = FALSE )
+Goldberg_ppp_c$group <- relevel(Goldberg_ppp_c$group, ref = 'het')
 
 ctrl <- lmeControl(msMaxIter=10000,
                    MaxIter=100000,
