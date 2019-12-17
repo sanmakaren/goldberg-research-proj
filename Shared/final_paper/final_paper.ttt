@@ -1,0 +1,54 @@
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:unnamed-chunk-17}Predicting attachment with time and love}
+
+\begin{tabular}{llllll}
+\toprule
+ & \multicolumn{1}{c}{Value} & \multicolumn{1}{c}{Std.Error} & \multicolumn{1}{c}{DF} & \multicolumn{1}{c}{t-value} & \multicolumn{1}{c}{p-value}\\
+\midrule
+(Intercept) & 3.45 & 0.20 & 572.00 & 17.45 & 0.00\\
+time & 0.00 & 0.01 & 572.00 & -0.06 & 0.95\\
+love\_A & 0.11 & 0.02 & 572.00 & 5.98 & 0.00\\
+love\_P & -0.02 & 0.02 & 572.00 & -0.83 & 0.41\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table*}
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:unnamed-chunk-18}Predicting attachment with time and love and group*love interaction}
+
+\begin{tabular}{llllll}
+\toprule
+ & \multicolumn{1}{c}{Value} & \multicolumn{1}{c}{Std.Error} & \multicolumn{1}{c}{DF} & \multicolumn{1}{c}{t-value} & \multicolumn{1}{c}{p-value}\\
+\midrule
+(Intercept) & 3.71 & 0.29 & 568.00 & 12.80 & 0.00\\
+time & 0.00 & 0.01 & 568.00 & -0.08 & 0.93\\
+love\_A & 0.06 & 0.03 & 568.00 & 1.97 & 0.05\\
+groupgay & -0.75 & 0.50 & 138.00 & -1.48 & 0.14\\
+grouples & -0.27 & 0.43 & 138.00 & -0.64 & 0.52\\
+love\_P & 0.00 & 0.03 & 568.00 & 0.12 & 0.90\\
+love\_A:groupgay & 0.12 & 0.05 & 568.00 & 2.58 & 0.01\\
+love\_A:grouples & 0.07 & 0.05 & 568.00 & 1.47 & 0.14\\
+groupgay:love\_P & -0.02 & 0.05 & 568.00 & -0.51 & 0.61\\
+grouples:love\_P & -0.02 & 0.05 & 568.00 & -0.47 & 0.64\\
+\bottomrule
+\end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table*}

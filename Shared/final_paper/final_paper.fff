@@ -1,0 +1,20 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+{\centering \includegraphics[width=500px]{figure1}
+
+}
+
+\caption{Love and attachment mediated by anxiety}\label{fig:unnamed-chunk-3}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+{\centering \includegraphics[width=500px]{figure2}
+
+}
+
+\caption{Love and attachment mediated by depression}\label{fig:unnamed-chunk-4}
+\end{figure*}
