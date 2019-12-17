@@ -1,0 +1,581 @@
+---
+title             : "Do loving couples' relationships relate to attachment to their children? A study on the relationship of love on parent-child attachment and the mediating roles of anxiety and depression"
+shorttitle        : "SDS/PSY 365"
+author: 
+    
+  - name          : "Karen Santamaria"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "sanmakaren@gmail.com"
+    address       : "1 Chapin Way, Unit 7766, Northampton, MA 01063"
+  - name          : "Yifan Ma"
+    affiliation   : "1"
+  - name          : "Caroline Li"
+    affiliation   : "1"
+  - name          : "Jane Bang"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Smith College"
+    
+abstract: |
+
+  This longitudinal study examined how perceived love within dyads and parent-child attachment are associated across couple types in adoptive families. The research further studied the effect of depression and anxiety as mediators of the relationship between perceived love in the parental relationship and parent-child attachment. A community sample of 141 heterosexual, lesbian, and gay couples completed a packet of questionnaires related to the relationship between partner, attachment to their adopted children, depression, and anxiety. The data were collected three times to assess the time effects. Results provided support for the relationship between the actor effect of perceived love and the parent-child attachment. Also, we found significant differences in the association between perceived love and parent-child attachment between heterosexual and gay male couples. Furthermore, we confirmed that the relationship between an individual’s perceived love in the dyadic relationship and his/her attachment towards the child was negatively mediated by anxiety and depression. As we concluded the impacts of perceived love in the dyadic relationship, family types, and mental health conditions on the parent-child relationship, findings can aid adoptive families in raising awareness in parental relationships and their mental health conditions. Future research can replicate the study by using different measures of attachment or examine the association with other factors such as conflicts and ambivalence in the dyadic relationship.
+
+  
+  
+bibliography      : ["r-references.bib"]
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library("tidyverse")
+library("ggplot2")
+library("psysds364data")
+library("feather")
+library("mosaic")
+library("dyadr")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+# Introduction
+
+
+Researchers conceptualized families as complex dynamic systems that are composed of various interactive components and are organized on levels such as the individual level, the dyadic level, and the nuclear family system. Within a family, the dyadic relationship develops in a recursive or iterative fashion and influences the adjustment of each member of the family and the family as a whole [@van2005dynamic]. Therefore, we may expect that dysregulation or deterioration in one relationship may be negatively associated with other relationships and the process may be conditionally dependent in time. While previous studies have shown that conflicts in parental relationships predict a lower quality of parent-child relationships [@cummings1994children; @laurent2008prospective; @klausli2011exploring], the majority of the existing literature dedicated to the association between biological parents’ relationship and the parent-child relationship in heterosexual families. Consequently, little is known on how the relationship within lesbian couple dyads and gay couple dyads (LG) may shape these parents’ attachment to their children. Furthermore, while relationship-quality is assessed, little is known about how anxiety and depression play a role in mediating the correlation between relationship-quality and attachment. 
+
+Children’s attachment is one of the crucial factors in predicting future misconduct and maladjustment. One study found that infant attachment security moderated the association between parenting in preschool and later aggressive behavior among children at high risk for developing conduct problems [@study3]. Furthermore, other studies have found that behavioral issues during childhood were a significant predictor for behavioral issues during adolescence and adulthood [@fergusson2005show; @reef2011developmental]. Thus, examining factors related to attachment is important because insecure attachment may have lifelong negative effects. 
+
+In adoptive families, children may already come with a past where they may have been exposed to adverse emotional and physical experiences in adoptive families [@van2006emanuel]. Furthermore, the transition into adoptive parenthood is a stressful time marked by many changes in the daily lives of these parents. Some studies supported increased psychological vulnerability related to adoption [@brodzinsky2014children]. However, research has also shown that there was no difference in the quality of mother and infant attachment between adoptive families and biological families [@singer1985mother]. Additionally, other literature has indicated that adoptive families had more positive expectations and experiences than biological parents [@levy1991transition]. The mixed findings highlighted the importance of examining the parent-child attachment in adoptive families. Moreover, @goldberg2009perceived explored the change in perceived parenting skills among lesbian, gay, and heterosexual couples and found that gay men perceived themselves as having the largest increase in skill while lesbians perceived themselves as having the least. This study indicated that the experiences of LG parents differ from the experiences of heterosexual parents. As a result, the differences in the attachment in heterosexual, lesbian, and gay parents are of interest to investigate.
+
+Studies of intimate relationship and psychopathology have established a bidirectional association between relationship functioning and individual mental health. While relationship problems may act as interpersonal stressors that increase the likelihood of a person developing mental disorders, mental health issues may also be accompanied by changes in relationships that are difficult for the partner to accommodate [@whisman2012intimate]. As a result, we speculated that anxiety and depressive symptoms may play roles in the association between love between parents and parent-child attachment. Since studies have shown the essential role of a close, warm, and supportive parent-child relationships for children’s healthy development [@gao2019understanding], it is critical to explore the relationship between love (between parents) and adoptive parents’ attachment to adoptees and examine the if it is mediated by anxious or depressive symptoms. 
+
+One study found out that marital quality had significant influences on health trajectories in the general population; negative marriage experiences accelerated declines in self-rated health over time, and positive marriage experiences decreased over time. In addition, the effects of marital quality on health are similar between men and women [@umberson2006you]. The association between marital quality and the parent-child relationship has been widely studied by scholars. Research indicated, for example, that fathers who were maritally less satisfied acted negatively to their daughters regardless of daughters’ behaviors. However, there was no evidence for a compensatory bond between less maritally satisfied parents and their same-sex children [@kerig1993marital]. @dickstein2009maternal revealed the link between the quality of couples interaction, family functioning, and infant-mother attachment. They found that the quality of couples interaction predicted family functioning which further predicted infant-mother attachment. When individuals reported a higher level of emotional quality with their spouse, they also reported a better relationship with their child [@gao2019understanding]. Another study supported that that marriage happiness predicted parent-child relationship problems, divorce, and parental affection toward children [@amato1996prospective]. Given the above-mentioned findings, we hypothesized that parental relationship is positively associated with parent-child attachment and will increase the level of attachment across time. Since there is a lack of studies that examine the actor-partner effect in the association, we sought to explore how people’s relationship with their spouse is associated with the partner’s attachment with their children. Since relationships within a family are interconnected, we expected that love (between parents) would be positively associated with the partner’s attachment to children.
+
+Scholars have examined the association between mental health factors such as anxiety and depressive symptoms and dyadic relationships or parent-child attachment. For example, poor dyadic adjustment is found to be associated with both anxiety and depressive symptoms [@stevenson2011maternal]. @stevenson2007anxiety examined anxiety within families. They revealed that maternal anxiety was significantly associated with mothers’ and fathers’ independent ratings of marital satisfaction and to fathers’ own anxiety and depression while fathers’ anxiety was significantly related to mothers’ ratings of marital satisfaction and to maternal anxiety. Meanwhile, @stevenson2011maternal found that both maternal anxiety and children’s behavior inhibition were negatively related to the ratings of children’s attachment and maternal anxiety was a significant predictor for insecure attachment. A study that compared the mother-child attachment style in depressed and non-depressed mothers reported a higher incidence of insecure attachment model in the depressed-mother group compared to the healthy controls [@santona2015maternal]. Despite these established links, none of the studies we found have investigated the interplay of these three factors. According to the previous findings, we hypothesized that the relationship between love and parent-child attachment would be mediated by anxiety and depressive symptoms. We also decided to incorporate the longitudinal aspect to our model because @goldberg2013lesbian have shown that a parent’s perceived attachment with their children varies over time, and both parent-related factors and child-related factors could influence it. As a result, we would also like to predict that the relationship quality between parents at earlier phases in the study will predict parent-child attachment in later phases.
+
+Previous research examining gay-father families found that parenting stress could predict child externalizing problems and gay fathers have a lower level of parenting stress compared with heterosexual parents [@golombok2014adoptive]. We hypothesized that different family structures will result in different correlations between love and parent-child attachment. 
+
+Given what previous research has suggested, such as; there are long term effects of attachment security for a child [@study3;@fergusson2005show; @reef2011developmental]; that dyadic relationships have a ripple or recursive effect on other relationships [@van2005dynamic]; the effect of marital quality may influence health [@umberson2006you]; and the associations between anxiety and depressive symptoms and dyadic relationships or parent-child attachment [@stevenson2011maternal], we found it important to analyze how love experienced and expressed corresponds with parent-child attachment. In addition, since only limited research has focused on the influence of different family structures on the correlation between love and perceived attachment, we decided to incorporate the factor of family structure into our model. Our first hypothesis was that love correlates with attachment and this correlation changes with respect to time point. We also assumed that the correlation between love and attachment is different across family type. Furthermore, we predicted the association between love and attachment is bigger for LG couples than it is for heterosexual couples. Within all these hypotheses, we were also interested in finding if anxiety and/or depression plays a role in moderating or mediating these relationships.
+
+
+
+
+```{r methods_setup, include=FALSE}
+data("Goldberg")
+data("Goldberg_rutendo")
+Goldberg_rutendo <- Goldberg_rutendo %>%
+  filter(Member_A == 1 & Member_P == 2 | Member_A == 2 & Member_P == 1)
+Goldberg_rutendo$sexor <- as_factor(Goldberg_rutendo$sexor)
+
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+
+relationship_stat <- read_feather("saved_data/relationship_stat.feather")
+attch_stat <- read_feather("saved_data/attch_stat.feather")
+depres_stat <- read_feather("saved_data/depres_stat.feather")
+anxiety_stat <- read_feather("saved_data/anxiety_stat.feather")
+```
+
+
+
+
+
+# Methods
+
+## Participant Recruitment
+
+The data come from a larger longitudinal study on the transition to parenthood. To be included, couples had to be first time parents and adopting their first child. Adoption agencies across the US were asked to provide study information to clients seeking to adopt. Effort was made to contact agencies in states that had a high percentage of same-sex couples. Over 30 agencies provided information to clients; interested clients contacted the principal investigator for participation details. Both same-sex and heterosexual couples were targeted through these agencies to facilitate similarity on income and geographic location. Organizations such as the Human Rights Campaign, a gay political organization, also disseminated study information. 
+	
+## Procedure
+
+Both members of each couple were informed of the risks and benefits of the study, gave consent, and participated at pre-adoptive placement (Time 1 or T1) and 2 years post-adoptive placement (T2). At each phase, they were sent a packet of questionnaires to complete and they were interviewed over the phone. Interviews lasted 1-1.5 hours. Phase 1 occured at XXXX
+
+## Measures
+
+### Parents Relationship. 
+
+Parents’ relationship was assessed using the Relationship Questionnaire by @braiker1979conflict. The questionnaire contains four subscales: Love (10 items), Conflict (5 items), Ambivalence (5 items), and Maintenance (5 items). Some example items include “To what extent do you have a sense of ‘belonging with your partner?’” (Love) “How ambivalent are you about continuing in the relationship with your partner?” (Ambivalence) “How often do you and your partner argue?” (Conflict) and “To what extent do you reveal or disclose very intimate things about yourself or personal feelings to your partner?” (Maintenance). The questions are answered on a 9-point scale (1 not at all to 9 very much). After the correlation analysis, we found that item 15 was not associated with other items in the Conflict subscale. Therefore, we chose to drop item 15. The Cronbach’s alpha of love subscale for Phase 2 was 0.83, 0.84 for Phase 3, and 0.86 for Phase 3. The intraclass correlation (ICC) was moderate: 0.48 for Phase 2, 0.46 for Phase 3, and 0.49 for Phase 4. For the Conflict subscale, Cronbach’s alpha was 0.73 for Phase 2, 0.76 for Phase 3, and 0.75 for Phase 4, which indicated the reliability of the subscale. The intraclass correlation was moderate as well. ICC equaled to 0.38 for Phase 2, 0.34 for Phase 3, and 0.42 for Phase 4. For the Ambivalence subscale, Cronbach’s alpha was 0.78 for Phase 2 and 3 and 0.84 for Phase 4, which implied high reliability. The intraclass correlation was small to moderate. ICC was 0.19 for Phase 2, 0.12 for Phase 3, and 0.44 for Phase 4. The Cronbach’s alpha for the Maintenance subscale was 0.62 for Phase 2, 0.64 for Phase 3, and 0.41 for Phase 4. The intraclass correlation was small; ICC was 0.15 for both Phase 2 and 3 and 0.11 for Phase 4.
+
+### Attachment. 
+
+The Maternal Postnatal Attachment Scale [MPAS; @condon1997correlates] is a 19 item self-report questionnaire to assess mother-to-infant attachment. Items are rated on a 2, 3, 4, 5 point rating scale, depending on the item. The questionnaire consists of three subscales: Quality of Attachment (9 items), Absence of Hostility (5 items), and Pleasure in Interaction (5 items). Example items include, “When I am with the baby, I feel tense and anxious,” and “When I am caring for the baby, I get feelings of annoyance or irritation.” Due to the missing items in Phase 4, we chose to drop item 11 and item 14 in Phase 4. The Cronbach’s alpha for Phase 2 was 0.33, 0.76 for Phase 3, and 0.80 for Phase 4. The intraclass correlation (ICC) was small to moderate, ICC = 0.21 (Phase 2), 0.24 (Phase 3), and 0.34 (Phase 4).
+
+### Depression
+
+Depression was assessed using the Center for Epidemiological Studies-Depression Scale (CES-D), which is a 20-item measure developed by the National Institute of Mental Health by Radloff [@ghunney2011beyond]. The example questions include “My sleep was restless” and “I did not feel like eating; my appetite was poor” on a four-point scale from 0--rarely or none of the time (less than 1 day) to 3-- most or all of the time (5-7 days). The scale was reliable; Cronbach’s alpha was 0.89 for both Phase 3 and Phase 4. The intraclass correlation (ICC) was small to moderate. ICC equaled to 0.11 for Phase 3 and 0.30 for Phase 4.
+
+### Anxiety
+
+ The Spielberger State-Trait Anxiety Inventory [STAI; @spielberger1983state] is a 40 item instrument to measure trait anxiety and state anxiety. Due to the purpose of our study, only the Trait Anxiety subscale (20 items) is used to assess anxiety as a personality characteristic using a Likert scale ranging between 1 (not at all) to 4 (very much). Example items include: “I worry too much over something that really doesn’t matter” and “I am content; I am a steady person.” The scale was reliable, with Cronbach’s alpha resulting 0.91 for Phase 3 and 0.91 for Phase 4. There is nearly no intraclass correlation (ICC). ICC was -0.08 for Phase 3 and 0.01 for Phase 4.
+
+
+
+
+## Demographics 
+
+```{r}
+num_complete <- Goldberg_rutendo %>% 
+  filter((Member_A == 1 & Member_P == 2) | (Member_A == 2 & Member_P == 1)) %>%
+  summarise(n())
+
+num_indiv <- Goldberg_rutendo %>% 
+  summarise(n())
+```
+
+There are  `r num_complete` individuals recorded in the study where an Actor and a Partner are both present. Within the scope of this study we will exclusively working with these `r num_complete` individuals, 141 dyads. 
+The dyad relationships were 39.0% heterosexual, 33.3% lesbian, and 27.7% gay. 
+The gender makeup of the study is, 52.80%  female and 47.20% male. 
+There are 31 racial/ethnic groups identified in the study with the 8 largest groups being: Caucasian (31.9%), African American (9.93%), 1/2 African American and 1/2 Caucasian (7.80%), Hispanic (7.80%), Guatemalan (7.45%), Chinese (7.09%),Vietnamese (3.55%), 1/2 Caucasion and 1/2 Hispanic (3.19%). 
+The median personal income for participants in the study was \$55,00 during phase 1 and \$60,000 during phase 4. 
+The median age when a child came to be with their parent was 0 years however something to note is that there is one instance where the recorded age was 72, which may due to error in the data. 
+The main reason for adoption in this study was due to infertility (43.30%).
+The dyads were categorized as POC-POC (66.0%), white-white (32.6%), POC-white(0.71), and NA-NA (0.71). White was defined as those that idenitified as Caucasian, Mostly Caucasian (1/8 American Indian), and Mostly White. The POC category was an used for all others that were not categorized as white or at least 9/8th's white.
+In terms of education, at phase 1, 32.3% of individuals in this study have a Master's, 30.9% have completed college, 14.20% did not repoort education level,  9.57% had a PhD, JD or MD, 6.03% had some college, 3.90% had a high school diploma, and 3.19% had an Associate's.
+
+
+## Preliminary Analyses
+
+Besides limiting the participants to the complete dyads, we only include 3 phases from the original Goldberg dataset. Phase 2, 3, and 4 were chosen since perceived attachment was only recorded during those phases. They are therefore limiting the rest of the variables to the three phases as well. Among the 141 complete dyads, 54.96% dropped off during phase 3, and 17.02% dropped off during phase 4. The drop off rate also varied across different family structures, only 6 heterosexual parents dropped off during phase 4, while 7 LG parents left the study during phase 3 and 18 LG parents left during phase 4. 
+
+Then we examined the average score of parents relationship, attachment, depression, and anxiety across family structure and phases. For the parent relationship scale, we observe a decreasing trend through the development of phases for all three family structures. 
+
+```{r,fig1, fig.height = 3, fig.width = 5}
+ggplot(relationship_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Avg Relationship Score by Couple Type and Phase", y = "Avg Relationship Score")+
+  scale_x_discrete("Phases", labels = c("w12" = "2","w13" = "3", "w14" = "4")) +
+  scale_color_manual(name="Couple Type",
+                       labels=c("Gay","Het","Les"),
+                       values=c("red","green","blue"))
+```
+
+For the maternal postnatal attachment scale, lesbian parents had a higher average across different phases. We also observed that during phase 2, LG parents experienced a rise in perceived attachment while heterosexual parents experienced a decrease. 
+
+```{r, fig2, fig.height = 3, fig.width = 5}
+ggplot(attch_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Avg Attachment Score by Couple Type and Phase", y = "Avg Attachment Score")+
+  scale_x_discrete("Phases", labels = c("w12" = "2","w13" = "3", "w14" = "4")) +
+  scale_color_manual(name="Couple Type", labels=c("Gay","Het","Les"), values=c("red","green","blue"))
+  
+```
+
+For the anxiety scale, gay parents experience the most anxiety comparing with other groups. Besides, both gay and heterosexual parents experience an increase in anxiety from phase 3 to phase 4, while lesbian parents experienced a slight decrease. 
+
+```{r, fig3, fig.height = 3, fig.width = 5}
+ggplot(anxiety_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Avg Anxiety Score by Couple Type and Phase", y = "Avg Anxiety Score")+
+  scale_x_discrete("Phases", labels = c("w13" = "3", "w14" = "4")) +
+  scale_color_manual(name="Couple Type", labels=c("Gay","Het","Les"), values=c("red","green","blue"))
+  
+```
+
+For the depression scale, both heterosexual and lesbian parents experienced an increase in depression from phase 3 to phase 4, while gay parents experienced a decrease.
+
+```{r, fig4, fig.height = 3, fig.width = 5}
+ggplot(depres_stat, aes(x=wave, y=avg, color=group, group=group)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Avg Depression Score by Couple Type and Phase", y = "Avg Depression Score")+
+  scale_x_discrete("Phases", labels = c("w13" = "3", "w14" = "4")) +
+  scale_color_manual(name="Couple Type", labels=c("Gay","Het","Les"), values=c("red","green","blue"))
+
+```
+
+By using an ANOVA test we found that sexual orientation (homosexual or heterosexual) was a statistically significant predictor for relationship duration at phase 1. On average, homosexual couples in this study have been in a relationship for 1.76 years less than heterosexual couples.
+
+```{r, include= FALSE, error=FALSE, warning=FALSE, message=FALSE}
+Goldberg_rutendo_only1 <- Goldberg_rutendo %>%
+  filter(Member_A == 1)
+
+lm1 <- lm(w11RelDur_A ~ sexor, data=Goldberg_rutendo_only1)
+summary(lm1)
+summary(aov(lm1))
+
+fit <- aov(w11RelDur_A ~ sexor, data=Goldberg_rutendo_only1) 
+layout(matrix(c(1,2,3,4),2,2))
+plot(fit) 
+anova(fit)
+summary(fit)
+```
+
+```{r, error=FALSE, warning=FALSE, message=FALSE, fig5, fig.height = 3, fig.width = 5}
+ggplot(Goldberg_rutendo_only1, aes(x=sexor, y=w11RelDur_A, fill=group), na.rm=TRUE) + 
+  geom_boxplot() +
+  labs(title = "Relationship Duration at Phase 1", y="Relationship Duration (years)", x="Sexual Orientation", fill = "Relationship-Type") +
+  scale_x_discrete(labels = c('Het','LG'))
+```
+
+
+# Results 
+
+```{r, fig.cap = "Love and attachment mediated by anxiety", fig.align = "center",out.width = "500px"}
+knitr::include_graphics("figure1.png", dpi = 600)
+```
+
+```{r, fig.cap = "Love and attachment mediated by depression", fig.align = "center",out.width = "500px"}
+knitr::include_graphics("figure2.png", dpi = 600)
+```
+
+
+```{r,include = FALSE}
+data(Goldberg)
+data(Goldberg_rutendo)
+```
+
+
+```{r,include = FALSE}
+Goldberg_rutendo$group <- as_factor(Goldberg_rutendo$group)
+levels(Goldberg_rutendo$group) <- c("les", "gay", "het")
+Goldberg_rutendo$group <- factor( Goldberg_rutendo$group , ordered = FALSE )
+Goldberg_rutendo$group <- relevel(Goldberg_rutendo$group, ref = 'het')
+
+Goldberg_rutendo <-  Goldberg_rutendo %>%
+  filter((Member_A == 1 & Member_P == 2)|(Member_A == 2 & Member_P == 1))
+```
+
+```{r,include = FALSE}
+#Function that returns mcmc CI. 
+mcmamCI <- function(aval, bval, varA, varB, n){
+
+#code (Selig & Preacher, 2008).
+  require(MASS)
+  
+  a=aval
+  b=bval
+  rep=n
+  conf=95
+  pest=c(a,b)
+  acov <- matrix(c(varA, 0, 0, varB),2,2)
+
+  mcmc <- mvrnorm(rep,pest,acov,empirical=FALSE)
+
+  ab <- mcmc[,1]*mcmc[,2]
+
+  low=(1-conf/100)/2
+  upp=((1-conf/100)/2)+(conf/100)
+
+  LL=quantile(ab,low)
+  UL=quantile(ab,upp)
+  LL=format(LL,digits=3)
+  UL=format(UL,digits=3)
+
+  CI <- cbind.data.frame(LL, UL)
+  return(CI)
+  
+
+}
+```
+
+
+
+```{r,include = FALSE}
+Goldberg_yifan <- Goldberg_rutendo %>%
+ dplyr::select(FamID, sexor, group, contains("Member"), contains("love"), contains("cnflct"), contains("ambiv"), contains("maint"), contains("seq"), contains("attach"), contains("feel"))
+
+
+
+
+sub_G <- Goldberg_yifan[c(1:5, 6:656)]
+
+sub_G$FeelMC_A <- NULL
+sub_G$FeelMC_P <- NULL
+#ppp: person, period, pairwise
+
+Goldberg_ppp <- 
+  unite(sub_G, "F_S_G_A_P", 1:5, sep = "_") %>%
+  gather("key","value", 2:650) %>%
+  separate(key, into = c("wave","scale"), sep = 3) %>%
+  spread("scale", "value") %>%
+  separate(F_S_G_A_P, into = c( "FamID", "sexor","group","Member_A","Member_P"), sep = "_") 
+
+```
+
+```{r,include = FALSE}
+
+Goldberg_ppp$FamID <- as.numeric(Goldberg_ppp$FamID)
+
+# rescaling the time
+Goldberg_ppp_c <- Goldberg_ppp %>%
+  mutate(time = ifelse(wave == "w11",-1, ifelse(wave == "w12",0,ifelse(wave == "w13",1,ifelse(wave == "w14",2,NA)))),
+         obsid = time + 3*(FamID-1),
+         month = ifelse(time == -1, 0, ifelse(time == 0, 3, ifelse(time == 1, 12, ifelse(time == 2, 24, NA)))))
+
+```
+
+
+
+```{r,include = FALSE}
+Goldberg_ppp_c$time <-  as.numeric(Goldberg_ppp_c$time)
+
+Goldberg_ppp_c$group <- factor( Goldberg_ppp_c$group , ordered = FALSE )
+Goldberg_ppp_c$group <- relevel(Goldberg_ppp_c$group, ref = 'het')
+
+ctrl <- lmeControl(msMaxIter=10000,
+                   MaxIter=100000,
+                   msMaxEval=10000,
+                   returnObject=TRUE,
+                   niterEM=10000,
+                   nlmStepMax=1000)
+```
+
+
+```{r,include = FALSE}
+options(scipen=999)
+Goldberg_ppp_c <- Goldberg_ppp_c %>%
+  mutate(I1 = ifelse(Member_A == 1, 1, 0),
+         I2 = ifelse(Member_A == 2, 1, 0),
+         I_sum = I1 + I2, 
+         I_diff = I1 - I2, 
+         TIME_sum = time*I_sum, 
+         TIME_diff = time*I_diff)
+
+```
+
+
+
+
+
+
+```{r,include = FALSE}
+hyp1 <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+hyp_1_results = summary(hyp1)
+```
+
+```{r,include = FALSE}
+hyp2 <- lme(attach_A ~  time + love_A*group + love_P*group,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+hyp_2_results = summary(hyp2)
+```
+
+
+
+
+```{r,include = FALSE}
+#testing for anxiety as mediator
+
+stp1_anxiety <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_anxiety <- lme(seq_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+stp3_anxiety <- lme(attach_A ~  time + love_A + love_P + seq_A + seq_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+act_H_a <- coef(summary(stp2_anxiety))[3,1]
+act_H_a_se <- coef(summary(stp2_anxiety))[3,2]
+act_H_b <- coef(summary(stp3_anxiety))[5,1]
+act_H_b_se <- coef(summary(stp3_anxiety))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+```
+
+
+
+
+```{r,include=FALSE}
+#depression mediation
+stp1_dep <- lme(attach_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+
+###Step 2: Testing the effects of the love (X) on the mediators of anxiety member a meber b (M).
+stp2_dep <- lme(feel_A ~  time + love_A + love_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+
+
+stp3_dep <- lme(attach_A ~  time + love_A + love_P + feel_A + feel_P,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+
+act_H_a <- coef(summary(stp2_dep))[3,1]
+act_H_a_se <- coef(summary(stp2_dep))[3,2]
+act_H_b <- coef(summary(stp3_dep))[5,1]
+act_H_b_se <- coef(summary(stp3_dep))[5,2]
+
+mcmamCI(act_H_a, act_H_b, act_H_a_se^2, act_H_b_se^2, 3000)
+
+```
+
+
+
+```{r,include = FALSE}
+
+## create tibble with results for hyp1 
+intvari=as.numeric(VarCorr( hyp_1_results )[1,1])+as.numeric(VarCorr(hyp_1_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_1_results)[1,1])-as.numeric(VarCorr(hyp1)[3,1])
+slovari=as.numeric(VarCorr(hyp_1_results)[2,1])+as.numeric(VarCorr(hyp_1_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_1_results)[2,1])-as.numeric(VarCorr(hyp_1_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_1_results)[2,1])+as.numeric(getVarCov(hyp_1_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_1_results)[2,1])-as.numeric(getVarCov(hyp_1_results)[4,3])
+```
+
+
+
+
+
+
+```{r}
+test<-summary(hyp1)$tTable
+apa_table(test,
+          caption = "Predicting attachment with time and love",
+          escape = TRUE
+)
+```
+
+```{r}
+test<-summary(hyp2)$tTable
+apa_table(test,
+          caption = "Predicting attachment with time and love and group*love interaction",
+          escape = TRUE
+)
+```
+
+
+
+
+## Analysis Strategy
+We hypothesized that the individuals’ perception of love and their partner’s perception of love in their relationship would affect the parent-child relationship positively and associations would become stronger over time (hypothesis 1). We also hypothesized that the correlation between love and parent-child attachment would be different across family types (hypothesis 2). Furthermore, we hypothesized that depressive and anxiety symptoms play mediating roles in the association between love and attachment (hypotheses 3 and 4). We used multilevel modeling and the Actor-Partner Interdependence Model (APIM; @apim) to test these hypotheses. The APIM simultaneously estimates the effect of one’s perception of love in the relationship and the effect of the same variable but from the partner on parent-child attachment. Since our data was divided into three phases, the growth curve model was used. Given the characteristics of APIM and longitudinal dyadic data, we need to check for the intercept variance, slope variance, intercept covariance between dyad members, slope covariance, and slope-intercept covariance within person and between.
+In our first hypothesis we used the following explanatory variables: 1) the actor's perception of love in the relationship, 2) partner’s perception of love in the relationship, and 4) time. The response variable was actor's attachment. In our second hypothesis we added an interaction between love and actor-partner relationship type (lesbian, gay, or hetersexual). 
+In our third and fourth hypothesis we tested whether anxiety and depression of the actor could be potential mediators between the correlation of love of the actor and the actor’s perceived attachment. Figures 1 and 2 provide a visual examples of what mediation looks like within a APIM. We used the Monte Carlo method [@monte] for assessing mediation which created confidence intervals for indirect effects.
+
+## Main Results
+
+### Hypothesis 1:
+
+```{r,include = FALSE}
+
+## create tibble with results for hyp1 
+intvari=as.numeric(VarCorr( hyp_1_results )[1,1])+as.numeric(VarCorr(hyp_1_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_1_results)[1,1])-as.numeric(VarCorr(hyp_1_results)[3,1])
+slovari=as.numeric(VarCorr(hyp_1_results)[2,1])+as.numeric(VarCorr(hyp_1_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_1_results)[2,1])-as.numeric(VarCorr(hyp_1_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_1_results)[2,1])+as.numeric(getVarCov(hyp_1_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_1_results)[2,1])-as.numeric(getVarCov(hyp_1_results)[4,3])
+```
+
+In our first model, there was a statistically significant effect of the individuals’ perception of love on the perceived parent-child attachment for that individual, such that the higher the perception of love the more the person perceived that they were attached to their children, *b = 0.11,  SE = 0.019, p = 0.001*. Nevertheless, a person’s partner’s perception of love in their relationship did not show statistically significant effects on neither themselves’s nor their partner’s perceived parent-child attachment. We also found that time was not a statistically significant moderator for the correlation between love and attachment, such as the correlation between love and attachment for a person at time point one does not predict the correlation between love and attachment for a person at the following time point. In the model the intercept variance was `r round(intvari,6)`, intercept covariance was `r round(intcovari,6)`, and correlation between intercepts was `r round(intcovari/intvari,6)`. In regards to slope, the slope variance was `r round(slovari,6)`, the slope covariance was `r round(slocovari,6)`, correlation between the slopes was `r round(slocovari/slovari,6)`, slope-intercept covariance (within a person) was `r round(as.numeric(intslow),6)`, slope-intercept correlation (within a person) was `r round(intslow/sqrt(intvari*slovari),6)`, slope-intercept covariance (between persons) was `r round(as.numeric(intslob),6)`, and slope-intercept correlation (between a person) was `r round(intslob/sqrt(intvari*slovari),6)`. Further details on the outcomes for the hypothesis test are provided in Table 1.
+
+
+
+
+### Hypothesis 2:
+
+```{r,include = FALSE}
+#add hyp2 to results table
+intvari=as.numeric(VarCorr( hyp_2_results )[1,1])+as.numeric(VarCorr(hyp_2_results)[3,1]) 
+intcovari=as.numeric(VarCorr(hyp_2_results)[1,1])-as.numeric(VarCorr(hyp_2_results)[3,1])
+slovari=as.numeric(VarCorr(hyp_2_results)[2,1])+as.numeric(VarCorr(hyp_2_results)[4,1]) 
+slocovari=as.numeric(VarCorr(hyp_2_results)[2,1])-as.numeric(VarCorr(hyp_2_results)[4,1])
+
+intslow= as.numeric(getVarCov(hyp_2_results)[2,1])+as.numeric(getVarCov(hyp_2_results)[4,3])
+intslob= as.numeric(getVarCov(hyp_2_results)[2,1])-as.numeric(getVarCov(hyp_2_results)[4,3])
+```
+
+For our second hypothesis, we predicted that the correlations of perception of love and parent-child attachment would be different across family types. Contradict to our prediction, we did not find the interaction of different family types on the correlation between love and parent-child attachment with respect to time point statistically significant. In the model, the intercept variance was `r round(intvari,6)`, intercept covariance was `r round(intcovari,6)`, and correlation between intercepts was `r round(intcovari/intvari,6)`. In regards to slope, the slope variance was `r round(slovari,6)`, the slope covariance was `r round(slocovari,6)`, correlation between the slopes was `r round(slocovari/slovari,6)`, slope-intercept covariance (within a person) was `r round(as.numeric(intslow),6)`, slope-intercept correlation (within a person) was `r round(intslow/sqrt(intvari*slovari),6)`, slope-intercept covariance (between persons) was `r round(as.numeric(intslob),6)`, and slope-intercept correlation (between a person) was `r round(intslob/sqrt(intvari*slovari),6)`. Further details on the outcomes for the hypothesis test one are provided in Table 2.
+
+
+
+
+
+### Hypothesis 3:                    
+In order to determine if anxiety mediates the relationship between perceived love in the parental relationship and parent-child relationship, a series of regression analyses were conducted. First, the love reported in the parental relationship (*b = 0.11, SE = 0.041, p = <0.001*) significantly predicted parent-child attachment. Next, we found that the trait of anxiety was significantly predicted by an individual's perception of love in the relationship (*b = -0.11, SE = 0.021, p =  <0.001*). Finally, we found that an individual's perception of love (*b = 0.067, SE = 0.022, p = 0.003*) and the trait of anxiety (*b = -0.33, SE = 0.046, p = <0.001*) together significantly predicted parent-child attachment. The results revealed that anxiety negatively mediated the relationship between the perceived love in one’s relationship and the perceived attachment to one’s child. Finally, we used the Monte Carlo method [@monte] and found that the indirect effect of the mediation is statistically significant (CI ranges from 0.0199 to 0.0524).
+
+### Hypothesis 4:
+In our fourth model, we found that there was a statistically significant mediation effect of depression on the correlation between love and attachment. In our previous model, we learned that there was a significant correlation between the actor’s love and the actor’s attachment. Then we tested and found that there was a statically significant actor effect of love on depression, such that the actor’s depression level decreased with the increase of their own perceived love, *b = -0.098, SE = 0.019, p = <0.001*. We further tested the direct effect of actor’s love and their depression on attachment in a full model and found that both the actor effect of love (*b = 0.077, SE = 0.023, p = <0.001*) and depression (*b = -0.27, SE = 0.046, p = <0.001*) were statistically correlated with attachment. This mediation was such that a person who was high in perceived love had a lower level of depression, while a higher level of depression also negatively influence their perceived parent-child attachment. Finally, we used the Monte Carlo method [@monte] and found that the indirect effect of the mediation is statistically significant (CI ranges from 0.0194 to 0.0532).
+In the full model, we also found time as a statistically significant predictor for the correlation between depression and love to attachment (*b = -0.065, SE = 0.032, p = 0.043*); however, we deduced the significance to be inconclusive since we did not find significant correlation with either attachment or love.
+
+
+
+### Hypothesis 5:
+
+maybe we should include this in order to claim it is longetudinal
+
+```{r}
+hyp5 <- lme(attach_A ~  love_A*time + love_P*time,
+                        data = Goldberg_ppp_c, 
+                        random = list(FamID = pdBlocked(list(~ I_sum+TIME_sum-1,~ I_diff+TIME_diff-1))),
+                        correlation = corCompSymm(form = ~1|FamID/obsid),
+                        na.action = na.omit)
+```
+
+
+# Discussion
+stuff
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup
