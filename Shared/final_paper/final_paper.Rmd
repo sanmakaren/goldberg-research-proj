@@ -538,9 +538,6 @@ intslob= as.numeric(getVarCov(hyp_2_results)[2,1])-as.numeric(getVarCov(hyp_2_re
 For our second hypothesis, we predicted that the correlations of perception of love and parent-child attachment would be different across family types. Contradict to our prediction, we did not find the interaction of different family types on the correlation between love and parent-child attachment with respect to time point statistically significant. In the model, the intercept variance was `r round(intvari,6)`, intercept covariance was `r round(intcovari,6)`, and correlation between intercepts was `r round(intcovari/intvari,6)`. In regards to slope, the slope variance was `r round(slovari,6)`, the slope covariance was `r round(slocovari,6)`, correlation between the slopes was `r round(slocovari/slovari,6)`, slope-intercept covariance (within a person) was `r round(as.numeric(intslow),6)`, slope-intercept correlation (within a person) was `r round(intslow/sqrt(intvari*slovari),6)`, slope-intercept covariance (between persons) was `r round(as.numeric(intslob),6)`, and slope-intercept correlation (between a person) was `r round(intslob/sqrt(intvari*slovari),6)`. Further details on the outcomes for the hypothesis test one are provided in Table 2.
 
 
-
-
-
 ### Hypothesis 3:                    
 In order to determine if anxiety mediates the relationship between perceived love in the parental relationship and parent-child relationship, a series of regression analyses were conducted. First, the love reported in the parental relationship (*b = 0.11, SE = 0.041, p = <0.001*) significantly predicted parent-child attachment. Next, we found that the trait of anxiety was significantly predicted by an individual's perception of love in the relationship (*b = -0.11, SE = 0.021, p =  <0.001*). Finally, we found that an individual's perception of love (*b = 0.067, SE = 0.022, p = 0.003*) and the trait of anxiety (*b = -0.33, SE = 0.046, p = <0.001*) together significantly predicted parent-child attachment. The results revealed that anxiety negatively mediated the relationship between the perceived love in one’s relationship and the perceived attachment to one’s child. Finally, we used the Monte Carlo method [@monte] and found that the indirect effect of the mediation is statistically significant (CI ranges from 0.0199 to 0.0524).
 
@@ -552,7 +549,7 @@ In the full model, we also found time as a statistically significant predictor f
 
 ### Hypothesis 5:
 
-maybe we should include this in order to claim it is longetudinal
+maybe we should include this to claim it is longitudinal
 
 ```{r}
 hyp5 <- lme(attach_A ~  love_A*time + love_P*time,
@@ -564,7 +561,10 @@ hyp5 <- lme(attach_A ~  love_A*time + love_P*time,
 
 
 # Discussion
-stuff
+
+In our model, we found that there exists a significant actor effect of an individuals’ perception of love on the perceived parent-child attachment for that individual. The finding is in support of previous literature on higher relationship quality will lead to higher parent-child attachment. In our second hypothesis, our finding adds to the current literature in that we provided evidence on the different family structure has no interference on the correlation between love and perceived parent-child attachment. 
+
+For our third and fourth hypotheses, we found anxiety and depression negatively mediating the correlation between love and parent-child attachment. While our model incorporates the aspect of various family structures, the general finding reinforces the previous conclusions on depression negatively mediating relationship quality and parent-child attachment. Different from the previous literatures; however, neither anxiety nor depression shows any actor-partner effects. 
 
 \newpage
 
